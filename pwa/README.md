@@ -1,7 +1,21 @@
-# Vue 3 + Vite
+# ApePay
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Welcome to the ApeCoin Payment Gateway, a secure online portal for merchants and institutions that wish to offer ApeCoin and other cryptocurrencies as a payment option.
 
-## Recommended IDE Setup
+Fast - Get started in minutes with our self-managed product.
+Flexible - Accept ApeCoin and a number growing number of cryptocurrencies
+Global - Open your business up to customers around the world.
+Costs - Lower fees versus traditional payment methods
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Includes push notifications and smart contracts to store transactional data.
+
+## How it's made
+
+Front-end built using Vue 3, Pinia and SCSS.
+Solidity - Smart contracts written using Solidity, using the OpenZepplin core libraries.
+
+buidl by WebMoss
+
+Twitter: [@webmoss](https://twitter.com/webmoss)
+LinkedIn: <https://www.linkedin.com/in/craig-moss-21822628/>
+GitHub: <https://github.com/webmoss>

@@ -6,6 +6,8 @@ export const useStore = defineStore({
     loading: false,
     account: null,
     balance: null,
+    transaction: null,
+    transactions: [],
   }),
   getters: {
     isLoading(state) {
@@ -17,6 +19,12 @@ export const useStore = defineStore({
     getBalance(state) {
       return state.balance;
     },
+    getTransaction(state) {
+      return state.transaction;
+    },
+    getTransactions(state) {
+      return state.transactions;
+    },
   },
   actions: {
     setLoading(value) {
@@ -27,6 +35,15 @@ export const useStore = defineStore({
     },
     setBalance(balance) {
       this.balance = balance;
+    },
+    setTransaction(transaction) {
+      this.transaction = transaction;
+    },
+    setTransactions(transactions) {
+      this.transactions = transactions;
+    },
+    addTransactions(...transactions) {
+      this.transactions.push(...transactions);
     },
   },
 });
