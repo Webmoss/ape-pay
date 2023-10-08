@@ -6,13 +6,37 @@
     <div class="intro">
       <div class="left-side">
         <div class="description">
-          <h2>Payments</h2>
+          <h2>ApeCoin<br class="mobile-hidden" />Payments</h2>
           <p>
-            Connect your safe wallet and select your preferred payment method.
+            Connect your safe wallet and chose your preferred payment method.
+          </p>
+          <p>
+            Use ApeCoin for transaction fees and optimise your gas fees and
+            costs.
+          </p>
+          <p>
+            <a
+              class="link"
+              href="https://apecoin.com/"
+              target="_blank"
+              alt="About ApeCoin "
+              >ApeCoin Powered →
+            </a>
           </p>
         </div>
       </div>
       <div class="right-side">
+        <div class="button-container">
+          <button class="tab-button" @click="swtichTab('crypto')">
+            Crypto Payment
+          </button>
+          <button class="tab-button" @click="swtichTab('multi-sig')">
+            Multi-Sig
+          </button>
+          <button class="tab-button" @click="swtichTab('credit-card')">
+            Credit Card
+          </button>
+        </div>
         <div class="card">
           <h3>ApeSafe</h3>
           <p>This is some text</p>
@@ -29,13 +53,19 @@
   </div>
 </template>
 <script setup>
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useStore } from "@/store";
 import MiniMenu from "./MiniMenu.vue";
 
 const store = useStore();
 const { account } = storeToRefs(store);
+
+const tab = ref("crypto");
+const swtichTab = async (type) => {
+  console.log("swtichTab", type);
+  tab.value = type;
+};
 
 const makePayment = async () => {
   console.log("makePayment");
@@ -144,6 +174,28 @@ onMounted(async () => {
   align-content: center;
   align-items: center;
   justify-content: center;
+  .tab-button {
+    color: $black;
+    background: transparent;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px;
+    border: 0;
+    text-decoration: none;
+    transition: text-decoration 0.6s;
+    cursor: pointer;
+    margin: 0;
+
+    &:hover {
+      color: $ape-blue;
+      text-decoration: underline;
+    }
+    &:focus,
+    &:focus-visible {
+      text-decoration: underline;
+      outline: none;
+    }
+  }
   .card {
     width: 500px;
     display: flex;
@@ -151,12 +203,17 @@ onMounted(async () => {
     align-content: center;
     align-items: center;
     justify-content: center;
-    margin-top: 50px;
     padding: 2em;
     border-radius: 30px;
     border: 1px solid $grey-100;
     color: $black;
     background: $white;
+  }
+}
+.mobile-hidden {
+  display: block;
+  @include breakpoint($break-sm) {
+    display: none;
   }
 }
 </style>

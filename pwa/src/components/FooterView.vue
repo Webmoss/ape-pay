@@ -124,7 +124,7 @@ function navigateAndScroll(to) {
   letter-spacing: 0em;
   text-align: left;
   text-decoration: none;
-  background-color: $grey-100;
+  background-color: $black;
   color: $grey-20;
   a {
     color: $grey-20;
@@ -197,7 +197,7 @@ ul {
 }
 
 .container {
-  color: $grey-100;
+  color: $black;
   background: $white;
   margin: 0 auto;
   padding: 0 100px 50px;
@@ -243,6 +243,14 @@ ul {
 
 .footer .scroll-to-top {
   background-color: $white;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  padding: 20px;
+
+  &:hover {
+    border-color: $ape-blue;
+  }
 }
 .footer .scroll-to-top .arrow-up {
   fill: $black;

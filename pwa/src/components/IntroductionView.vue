@@ -17,7 +17,7 @@
         <div>
           <div class="slogan">
             Open up your business to new customers from around the world with
-            Safe wallet solutions and ApeCoin payment options.
+            Safe {Wallet} solutions and ApeCoin payment options
           </div>
         </div>
       </div>

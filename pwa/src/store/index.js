@@ -4,6 +4,7 @@ export const useStore = defineStore({
   id: "store",
   state: () => ({
     loading: false,
+    wallet: null,
     account: null,
     balance: null,
     transaction: null,
@@ -12,6 +13,9 @@ export const useStore = defineStore({
   getters: {
     isLoading(state) {
       return state.loading;
+    },
+    getWallet(state) {
+      return state.wallet;
     },
     getAccount(state) {
       return state.account;
@@ -29,6 +33,9 @@ export const useStore = defineStore({
   actions: {
     setLoading(value) {
       this.loading = value;
+    },
+    setWallet(wallet) {
+      this.wallet = wallet;
     },
     setAccount(account) {
       this.account = account;
