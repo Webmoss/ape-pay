@@ -3,6 +3,7 @@
     <li @click="navigateAndScroll('home')">Home →</li>
     <li @click="navigateAndScroll('about')">About →</li>
     <li @click="navigateAndScroll('payments')">Payments →</li>
+    <li @click="navigateAndScroll('faqs')">Faqs →</li>
   </ul>
 </template>
 

@@ -8,15 +8,16 @@
       <div class="container">
         <div>
           <div class="title">
-            ApeCoin<br />
-            Payment<br />
+            Safe<br class="mobile-hidden" />
+            ApeCoin<br class="mobile-hidden" />
+            Payment<br class="mobile-hidden" />
             Solutions
           </div>
         </div>
         <div>
           <div class="slogan">
             Open up your business to new customers from around the world with
-            ApeCoin crypto payment solutions.
+            Safe wallet solutions and ApeCoin payment options.
           </div>
         </div>
       </div>
@@ -52,7 +53,7 @@ onMounted(async () => {
   top: 0;
   padding: 0;
   margin: 0 auto;
-  background-image: url("../assets/images/ApeCoin-BG.png");
+  background-image: url("../assets/images/ApeCoin-Rings-Blue-BG.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: top right;
@@ -136,6 +137,13 @@ onMounted(async () => {
     line-height: 36px;
     max-width: 550px;
     margin: 60px 33px 96px 0;
+  }
+}
+
+.mobile-hidden {
+  display: block;
+  @include breakpoint($break-sm) {
+    display: none;
   }
 }
 </style>

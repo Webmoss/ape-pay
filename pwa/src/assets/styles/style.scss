@@ -45,11 +45,25 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-family: "TWKEverett";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 70px;
+  line-height: 78px;
+  text-align: left;
+  margin: 50px 0 30px;
+  @include breakpoint($break-sm) {
+    font-size: 34px;
+    margin: 0 0 26px;
+  }
+  @include breakpoint($break-md) {
+    font-size: 48px;
+    line-height: 74px;
+    margin: 30px 0;
+  }
 }
 
-.slogan {
+h2 {
   font-family: "TWKEverett";
   font-style: normal;
   font-weight: 400;
@@ -65,6 +79,26 @@ h1 {
     font-size: 48px;
     line-height: 74px;
     margin: 30px 0;
+  }
+}
+
+h3 {
+  font-family: "TWKEverett";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 36px;
+  text-align: left;
+  margin: 0 0 15px;
+  @include breakpoint($break-sm) {
+    font-size: 20px;
+    line-height: 24px;
+    margin: 0 0 15px;
+  }
+  @include breakpoint($break-md) {
+    font-size: 22px;
+    line-height: 26px;
+    margin: 0 0 15px;
   }
 }
 
@@ -98,51 +132,80 @@ p {
 }
 
 .button-container {
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-content: center;
   align-items: center;
   justify-content: center;
-  width: 100%;
 }
 
-.connect-button {
+.blue-button {
   color: $white;
   background-color: $ape-blue;
   font-size: 18px;
   font-weight: bold;
-  width: 200px;
+  width: 160px;
   height: 55px;
-  border: 0;
+  border: 2px solid $ape-blue;
   border-radius: 30px;
-  margin: 10px 1% 10px 0;
-  transition: 0.4s;
+  margin: 10px 1%;
+  transition: border-color 0.6s;
   cursor: pointer;
   
   &:hover {
     color: $black;
+    border-color: $black;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+}
+
+.grey-button {
+  color: $black;
+  background-color: $grey-20;
+  font-size: 18px;
+  font-weight: 900;
+  width: 160px;
+  height: 55px;
+  border: 1px solid $grey-20;
+  border-radius: 30px;
+  margin: 10px 1%;
+  transition: border-color 0.6s;
+  cursor: pointer;
+  
+  &:hover {
+    color: $ape-blue;
+    border-color: $ape-blue;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
   }
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  color: $black;
+  background-color: $white;
   font-family: inherit;
-  background-color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 900;
+  width: 160px;
+  height: 55px;
+  border: 1px solid $white;
+  border-radius: 30px;
+  margin: 10px 1%;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
-  padding: 2em;
+  transition: border-color 0.6s;
+  
+  &:hover {
+    color: $ape-blue;
+    border-color: $ape-blue;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
 }

@@ -6,21 +6,23 @@
     <div class="intro">
       <div class="left-side">
         <div class="description">
-          <div class="slogan">Payments</div>
-          <p>Connect your safe wallet, and make payment</p>
-          <button v-if="!account" class="connect-button" @click="connectWallet">
-            Connect
-          </button>
+          <h2>Payments</h2>
+          <p>
+            Connect your safe wallet and select your preferred payment method.
+          </p>
         </div>
       </div>
       <div class="right-side">
-        <p>This is some text</p>
-        <p>a form will live here</p>
-
-        <div class="button-container">
-          <button v-if="account" class="connect-button" @click="makePayment">
-            Pay Now
-          </button>
+        <div class="card">
+          <h3>ApeSafe</h3>
+          <p>This is some text</p>
+          <p>a form will live here</p>
+          <div class="button-container">
+            <button class="grey-button" v-if="!account" @click="connectWallet">
+              Connect
+            </button>
+            <button class="blue-button" @click="makePayment">Pay Now</button>
+          </div>
         </div>
       </div>
     </div>
@@ -124,23 +126,37 @@ onMounted(async () => {
 }
 .left-side {
   width: 40%;
-}
-
-.right-side {
-  width: 70%;
   display: flex;
   flex-direction: column;
   align-content: center;
   align-items: center;
   justify-content: center;
+  .description {
+    margin: 0 auto;
+    padding: 30px;
+  }
 }
 
-.description {
-  margin: 0 0 50px 50px;
-
-  @include breakpoint($break-xl) {
-    margin: 64px 0 0;
-    width: 70%;
+.right-side {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  .card {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    padding: 2em;
+    border-radius: 30px;
+    border: 1px solid $grey-100;
+    color: $black;
+    background: $white;
   }
 }
 </style>
