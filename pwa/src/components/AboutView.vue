@@ -45,7 +45,7 @@
   </div>
 </template>
 <script setup>
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useStore } from "@/store";
@@ -64,7 +64,6 @@ const signIn = async () => {
   // try {
   //   const safeWallet = await safeSignIn();
   //   console.log("Safe Wallet Sign In", safeWallet);
-
   //   if (safeWallet) {
   //     store.setWallet(safeWallet);
   //     console.log("Wallet :", wallet.value);
@@ -82,7 +81,6 @@ const signUp = async () => {
   // try {
   //   const newWallet = await createSafeWallet();
   //   console.log("Safe Wallet Created", newWallet);
-
   //   if (newWallet) {
   //     store.setWallet(newWallet);
   //     console.log("Wallet :", wallet.value);
@@ -100,7 +98,6 @@ const signOut = async () => {
   // try {
   //   const walletLog = await safeSignOut();
   //   console.log("Safe Wallet Signed Out", walletLog);
-
   //   store.setWallet(null);
   //   console.log("Wallet :", wallet.value);
   //   store.setConnected(false);
@@ -120,7 +117,6 @@ const checkSafeWalletConnected = async () => {
   //   const provider = new ethers.providers.Web3Provider(ethereum);
   //   const safeOwner = provider.getSigner(0);
   //   console.log("Safe Owner", safeOwner);
-
   //   if (safeOwner) {
   //     store.setConnected(true);
   //   }

@@ -26,7 +26,7 @@
               </li>
               <li>
                 <a
-                  href="https://ethglobal.com/showcase"
+                  href="https://ethglobal.com/showcase/apepay-vr5js"
                   alt="EthGlobal Showcase"
                   target="_blank"
                   >Showcase →</a
