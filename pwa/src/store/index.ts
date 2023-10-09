@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { transactionObject } from "@/models/transaction";
+import { notificationObject } from "@/models/notification";
 
 export const useStore = defineStore({
   id: "store",
@@ -11,6 +12,8 @@ export const useStore = defineStore({
     balance: 0,
     transaction: <transactionObject>{},
     transactions: [] as transactionObject[],
+    notification: <notificationObject>{},
+    notifications: [] as notificationObject[],
   }),
   getters: {
     isLoading(state) {
@@ -33,6 +36,12 @@ export const useStore = defineStore({
     },
     getTransactions(state) {
       return state.transactions;
+    },
+    getNotification(state) {
+      return state.notification;
+    },
+    getNotifications(state) {
+      return state.notifications;
     },
   },
   actions: {
@@ -59,6 +68,15 @@ export const useStore = defineStore({
     },
     addTransactions(...transactions: transactionObject[]) {
       this.transactions.push(...transactions);
+    },
+    setNotification(notification: notificationObject) {
+      this.notification = notification;
+    },
+    setNotifications(notifications: notificationObject[]) {
+      this.notifications = notifications;
+    },
+    addNotifications(...notifications: notificationObject[]) {
+      this.notifications.push(...notifications);
     },
   },
 });

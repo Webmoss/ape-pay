@@ -15,6 +15,9 @@
         <li class="link-black" @click="navigateAndScroll('payments')">
           Payments
         </li>
+        <li class="link-black" @click="navigateAndScroll('transactions')">
+          Transactions
+        </li>
         <li class="link-black" @click="navigateAndScroll('faqs')">Faqs</li>
       </ul>
     </nav>
@@ -39,8 +42,8 @@ function scrollPageToTop() {
 }
 
 function scrolltoId(to: string) {
-  var access = document.getElementById(to);
-  if(access) access.scrollIntoView({ block: "start", behavior: "smooth" });
+  const access = document.getElementById(to);
+  if (access) access.scrollIntoView({ block: "start", behavior: "smooth" });
 }
 
 function navigateAndScroll(to: string) {

@@ -3,6 +3,7 @@
     <li @click="navigateAndScroll('home')">Home →</li>
     <li @click="navigateAndScroll('about')">About →</li>
     <li @click="navigateAndScroll('payments')">Payments →</li>
+    <li @click="navigateAndScroll('transactions')">Transactions →</li>
     <li @click="navigateAndScroll('faqs')">Faqs →</li>
   </ul>
 </template>
@@ -18,12 +19,12 @@ const scrollPageToTop = () => {
     left: 0,
     behavior: "smooth",
   });
-}
+};
 
 const scrolltoId = (to: string) => {
-  var access = document.getElementById(to);
-  if(access) access.scrollIntoView({ behavior: "smooth" });
-}
+  const access = document.getElementById(to);
+  if (access) access.scrollIntoView({ behavior: "smooth" });
+};
 
 function navigateAndScroll(to: string) {
   if (route.name === to) {

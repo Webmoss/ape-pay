@@ -1,6 +1,6 @@
-export interface transactionObject {
+export interface notificationObject {
   wallet_address?: string;
-  transaction_id?: string;
+  notification_id?: string;
   type?: string;
   description?: string;
   fee?: number;

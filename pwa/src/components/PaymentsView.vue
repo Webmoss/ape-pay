@@ -18,8 +18,15 @@
               class="link"
               href="https://apecoin.com/"
               target="_blank"
-              alt="About ApeCoin "
+              alt="About ApeCoin"
               >ApeCoin Powered →
+            </a>
+            <a
+              class="link"
+              href="https://xmtp.org/"
+              target="_blank"
+              alt="About XMTP Chat"
+              >XMTP Chat →
             </a>
           </p>
         </div>
@@ -66,25 +73,20 @@ const swtichTab = (type: string) => {
   color: $black;
   background: $safe-stone;
   background-image: url("../assets/images/large_blue_graphic.png"),
-    url("../assets/images/YellowCircle.png"),
     url("../assets/images/GreySwirlBG.png");
-  background-size: auto, auto, contain;
-  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: auto, contain;
+  background-repeat: no-repeat, no-repeat;
   background-position:
     top 10em left -3em,
-    right 47% bottom 2em,
     right 0 top 0;
   padding: 0;
 
   @include breakpoint($break-sm) {
     flex-direction: column;
-    background-image: url("../assets/images/large_blue_graphic.png"),
-      url("../assets/images/mobile_yellow.png");
-    background-size: auto, auto;
-    background-repeat: no-repeat, no-repeat;
-    background-position:
-      top 5em left,
-      right 1em bottom 1em;
+    background-image: url("../assets/images/large_blue_graphic.png");
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: top 5em left;
     padding: 32px 30px 55px 30px;
   }
 }

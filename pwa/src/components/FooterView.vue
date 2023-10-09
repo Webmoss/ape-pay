@@ -48,6 +48,7 @@
             <li @click="navigateAndScroll('home')">Home →</li>
             <li @click="navigateAndScroll('about')">About →</li>
             <li @click="navigateAndScroll('payments')">Payments →</li>
+            <li @click="navigateAndScroll('transactions')">Transactions →</li>
           </ul>
         </div>
         <div class="footer-card">
@@ -90,17 +91,17 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-const navigateAndScroll = (to: string) =>  {
+const navigateAndScroll = (to: string) => {
   if (route.name === to) {
     scrollPageToTop();
   } else {
     scrolltoId(to);
   }
-}
+};
 const scrolltoId = (to: string) => {
-  var access = document.getElementById(to);
-  if(access) access.scrollIntoView({ behavior: "smooth" });
-}
+  const access = document.getElementById(to);
+  if (access) access.scrollIntoView({ behavior: "smooth" });
+};
 
 const scrollPageToTop = () => {
   window.scrollTo({
@@ -108,7 +109,7 @@ const scrollPageToTop = () => {
     left: 0,
     behavior: "smooth",
   });
-}
+};
 </script>
 
 <style lang="scss" scoped>

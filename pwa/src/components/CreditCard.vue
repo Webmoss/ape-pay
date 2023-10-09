@@ -38,7 +38,7 @@ const makePayment = async () => {
   align-items: center;
   justify-content: center;
   padding: 2em;
-  border-radius: 30px;
+  border-radius: 16px;
   border: 1px solid $grey-100;
   color: $black;
   background: $white;
