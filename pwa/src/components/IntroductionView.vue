@@ -37,10 +37,12 @@ onMounted(async () => {
     scrollOffsets: [CSS.percent(0), CSS.px(700)],
   });
 
-  scrollTracker.animate(
-    { transform: ["scaleX(0)", "scaleX(1)"] },
-    { duration: 1, timeline: scrollTrackingTimeline },
-  );
+  if (scrollTracker) {
+    scrollTracker.animate(
+      { transform: ["scaleX(0)", "scaleX(1)"] },
+      { duration: 1, timeline: scrollTrackingTimeline },
+    );
+  }
 });
 </script>
 <style lang="scss" scoped>

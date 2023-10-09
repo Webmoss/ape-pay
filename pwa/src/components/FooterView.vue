@@ -85,30 +85,29 @@
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-function scrollPageToTop() {
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth",
-  });
-}
-
-function scrolltoId(to) {
-  var access = document.getElementById(to);
-  access.scrollIntoView({ behavior: "smooth" }, true);
-}
-
-function navigateAndScroll(to) {
+const navigateAndScroll = (to: string) =>  {
   if (route.name === to) {
     scrollPageToTop();
   } else {
     scrolltoId(to);
   }
+}
+const scrolltoId = (to: string) => {
+  var access = document.getElementById(to);
+  if(access) access.scrollIntoView({ behavior: "smooth" });
+}
+
+const scrollPageToTop = () => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth",
+  });
 }
 </script>
 

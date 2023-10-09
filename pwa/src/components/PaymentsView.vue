@@ -43,7 +43,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import MiniMenu from "./MiniMenu.vue";
 import CryptoPayment from "./CryptoPayment.vue";
@@ -52,7 +52,7 @@ import CreditCard from "./CreditCard.vue";
 
 const tab = ref("crypto");
 
-const swtichTab = (type) => {
+const swtichTab = (type: string) => {
   tab.value = type;
 };
 </script>

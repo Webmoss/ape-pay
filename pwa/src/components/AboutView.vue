@@ -44,17 +44,20 @@
     </div>
   </div>
 </template>
-<script setup>
-// import { ethers } from "ethers";
+<script setup lang="ts">
+import { ethers } from "ethers";
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useStore } from "@/store";
+import { useStore } from "../store/index.js";
 import MiniMenu from "./MiniMenu.vue";
+
 // import {
-//   safeSignIn,
-//   createSafeWallet,
-//   safeSignOut,
-// } from "../services/safeWallet.js";
+//   ADAPTER_EVENTS,
+//   CHAIN_NAMESPACES,
+//   SafeEventEmitterProvider,
+//   UserInfo,
+//   WALLET_ADAPTERS,
+// } from "@web3auth/base";
 
 const store = useStore();
 const { wallet } = storeToRefs(store);
@@ -109,22 +112,23 @@ const signOut = async () => {
 };
 
 const checkSafeWalletConnected = async () => {
-  // try {
-  //   const { ethereum } = window;
-  //   if (!ethereum) {
-  //     throw Error();
-  //   }
-  //   const provider = new ethers.providers.Web3Provider(ethereum);
-  //   const safeOwner = provider.getSigner(0);
-  //   console.log("Safe Owner", safeOwner);
-  //   if (safeOwner) {
-  //     store.setConnected(true);
-  //   }
-  // } catch (error) {
-  //   console.log("Error", error);
-  // } finally {
-  //   store.setLoading(false);
-  // }
+  try {
+    const { ethereum } = window;
+    if (!ethereum) {
+      throw Error();
+    }
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const safeOwner = provider.getSigner(0);
+    console.log("Safe Owner", safeOwner);
+
+    if (safeOwner) {
+      store.setConnected(true);
+    }
+  } catch (error) {
+    console.log("Error", error);
+  } finally {
+    store.setLoading(false);
+  }
 };
 
 onMounted(async () => {

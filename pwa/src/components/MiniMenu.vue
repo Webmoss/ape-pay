@@ -7,12 +7,12 @@
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-function scrollPageToTop() {
+const scrollPageToTop = () => {
   window.scrollTo({
     top: 0,
     left: 0,
@@ -20,12 +20,12 @@ function scrollPageToTop() {
   });
 }
 
-function scrolltoId(to) {
+const scrolltoId = (to: string) => {
   var access = document.getElementById(to);
-  access.scrollIntoView({ behavior: "smooth" }, true);
+  if(access) access.scrollIntoView({ behavior: "smooth" });
 }
 
-function navigateAndScroll(to) {
+function navigateAndScroll(to: string) {
   if (route.name === to) {
     scrollPageToTop();
   } else {

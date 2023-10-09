@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
+import { transactionObject } from "@/models/transaction";
 
 export const useStore = defineStore({
   id: "store",
   state: () => ({
     loading: false,
     connected: false,
-    wallet: null,
-    account: null,
-    balance: null,
-    transaction: null,
-    transactions: [],
+    wallet: {},
+    account: "",
+    balance: 0,
+    transaction: <transactionObject>{},
+    transactions: [] as transactionObject[],
   }),
   getters: {
     isLoading(state) {
@@ -35,28 +36,28 @@ export const useStore = defineStore({
     },
   },
   actions: {
-    setLoading(value) {
-      this.loading = value;
+    setLoading(isLoading: boolean) {
+      this.loading = isLoading;
     },
-    setConnected(connected) {
+    setConnected(connected: boolean) {
       this.connected = connected;
     },
-    setWallet(wallet) {
+    setWallet(wallet: object) {
       this.wallet = wallet;
     },
-    setAccount(account) {
+    setAccount(account: string) {
       this.account = account;
     },
-    setBalance(balance) {
+    setBalance(balance: number) {
       this.balance = balance;
     },
-    setTransaction(transaction) {
+    setTransaction(transaction: transactionObject) {
       this.transaction = transaction;
     },
-    setTransactions(transactions) {
+    setTransactions(transactions: transactionObject[]) {
       this.transactions = transactions;
     },
-    addTransactions(...transactions) {
+    addTransactions(...transactions: transactionObject[]) {
       this.transactions.push(...transactions);
     },
   },

@@ -5,7 +5,7 @@
   <Payments />
   <Footer />
 </template>
-<script setup>
+<script setup lang="ts">
 import Header from "@/components/HeaderView.vue";
 import Intro from "@/components/IntroductionView.vue";
 import About from "@/components/AboutView.vue";

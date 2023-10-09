@@ -1,9 +1,9 @@
 <template>
   <RouterView />
 </template>
-<script setup>
-import { RouterView } from "vue-router";
+<script setup lang="ts">
 import { onMounted } from "vue";
+import { RouterView } from "vue-router";
 
 onMounted(async () => {
   window.scrollTo({

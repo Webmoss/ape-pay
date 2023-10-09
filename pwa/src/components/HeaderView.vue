@@ -20,7 +20,7 @@
     </nav>
   </header>
 </template>
-<script setup>
+<script setup lang="ts">
 import { reactive } from "vue";
 import { useRoute } from "vue-router";
 
@@ -38,12 +38,12 @@ function scrollPageToTop() {
   });
 }
 
-function scrolltoId(to) {
+function scrolltoId(to: string) {
   var access = document.getElementById(to);
-  access.scrollIntoView({ block: "start", behavior: "smooth" }, true);
+  if(access) access.scrollIntoView({ block: "start", behavior: "smooth" });
 }
 
-function navigateAndScroll(to) {
+function navigateAndScroll(to: string) {
   if (route.name === to) {
     scrollPageToTop();
   } else {
