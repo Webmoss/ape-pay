@@ -45,81 +45,90 @@
   </div>
 </template>
 <script setup>
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useStore } from "@/store";
 import MiniMenu from "./MiniMenu.vue";
+import {
+  safeSignIn,
+  createSafeWallet,
+  safeSignOut,
+} from "../services/safeWallet.js";
 
 const store = useStore();
 const { wallet } = storeToRefs(store);
 
 const signIn = async () => {
-  // store.setLoading(true);
-  // try {
-  //   const safeWallet = await safeSignIn();
-  //   console.log("Safe Wallet Sign In", safeWallet);
-  //   if (safeWallet) {
-  //     store.setWallet(safeWallet);
-  //     console.log("Wallet :", wallet.value);
-  //     store.setConnected(true);
-  //   }
-  // } catch (error) {
-  //   console.log("Error", error);
-  // } finally {
-  //   store.setLoading(false);
-  // }
+  store.setLoading(true);
+  try {
+    const safeWallet = await safeSignIn();
+    console.log("Safe Wallet Sign In", safeWallet);
+
+    if (safeWallet) {
+      store.setWallet(safeWallet);
+      console.log("Wallet :", wallet.value);
+      store.setConnected(true);
+    }
+  } catch (error) {
+    console.log("Error", error);
+  } finally {
+    store.setLoading(false);
+  }
 };
 
 const signUp = async () => {
-  // store.setLoading(true);
-  // try {
-  //   const newWallet = await createSafeWallet();
-  //   console.log("Safe Wallet Created", newWallet);
-  //   if (newWallet) {
-  //     store.setWallet(newWallet);
-  //     console.log("Wallet :", wallet.value);
-  //     store.setConnected(true);
-  //   }
-  // } catch (error) {
-  //   console.log("Error", error);
-  // } finally {
-  //   store.setLoading(false);
-  // }
+  store.setLoading(true);
+  try {
+    const newWallet = await createSafeWallet();
+    console.log("Safe Wallet Created", newWallet);
+
+    if (newWallet) {
+      store.setWallet(newWallet);
+      console.log("Wallet :", wallet.value);
+      store.setConnected(true);
+    }
+  } catch (error) {
+    console.log("Error", error);
+  } finally {
+    store.setLoading(false);
+  }
 };
 
 const signOut = async () => {
-  // store.setLoading(true);
-  // try {
-  //   const walletLog = await safeSignOut();
-  //   console.log("Safe Wallet Signed Out", walletLog);
-  //   store.setWallet(null);
-  //   console.log("Wallet :", wallet.value);
-  //   store.setConnected(false);
-  // } catch (error) {
-  //   console.log("Error", error);
-  // } finally {
-  //   store.setLoading(false);
-  // }
+  store.setLoading(true);
+  try {
+    const walletLog = await safeSignOut();
+    console.log("Safe Wallet Signed Out", walletLog);
+
+    store.setWallet(null);
+    console.log("Wallet :", wallet.value);
+    store.setConnected(false);
+  } catch (error) {
+    console.log("Error", error);
+  } finally {
+    store.setLoading(false);
+  }
 };
 
 const checkSafeWalletConnected = async () => {
-  // try {
-  //   const { ethereum } = window;
-  //   if (!ethereum) {
-  //     throw Error();
-  //   }
-  //   const provider = new ethers.providers.Web3Provider(ethereum);
-  //   const safeOwner = provider.getSigner(0);
-  //   console.log("Safe Owner", safeOwner);
-  //   if (safeOwner) {
-  //     store.setConnected(true);
-  //   }
-  // } catch (error) {
-  //   console.log("Error", error);
-  // } finally {
-  //   store.setLoading(false);
-  // }
+  try {
+    const { ethereum } = window;
+    if (!ethereum) {
+      throw Error();
+    }
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const safeOwner = provider.getSigner(0);
+    console.log("Safe Owner", safeOwner);
+
+    if (safeOwner) {
+      store.setConnected(true);
+    }
+  } catch (error) {
+    console.log("Error", error);
+  } finally {
+    store.setLoading(false);
+  }
 };
 
 onMounted(async () => {
