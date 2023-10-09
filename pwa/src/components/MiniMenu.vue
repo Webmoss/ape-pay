@@ -40,16 +40,16 @@ function navigateAndScroll(to) {
 
 .site-links {
   list-style: none;
+  font-size: 20px;
+  line-height: 22px;
+  font-weight: 600;
   font-style: normal;
-  font-size: 16px;
-  line-height: 21px;
-  font-weight: 400;
   text-align: left;
   text-decoration-line: none;
-  margin-top: 52px;
+  margin-top: 50px;
   padding-left: 0;
   @include breakpoint($break-md) {
-    padding-right: 20px;
+    padding-right: 10px;
   }
 }
 .site-links li {

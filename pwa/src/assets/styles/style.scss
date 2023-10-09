@@ -41,24 +41,25 @@ body {
   align-items: center;
   align-content: center;
   justify-content: flex-end;
-  padding-right: 150px;
+  padding-right: 102px;
 }
 
 h1 {
   font-family: "TWKEverett";
   font-style: normal;
   font-weight: 400;
-  font-size: 70px;
-  line-height: 78px;
-  text-align: left;
-  margin: 50px 0 30px;
+  font-size: 60px;
+  line-height: 68px;
+  text-align: center;
+  margin: 50px 0 20px;
   @include breakpoint($break-sm) {
-    font-size: 34px;
+    font-size: 30px;
+    line-height: 34px;
     margin: 0 0 26px;
   }
   @include breakpoint($break-md) {
-    font-size: 48px;
-    line-height: 74px;
+    font-size: 40px;
+    line-height: 48px;
     margin: 30px 0;
   }
 }
@@ -231,7 +232,7 @@ p {
 
 button {
   color: $black;
-  background-color: $white;
+  background-color: $safe-stone;
   font-family: inherit;
   font-size: 18px;
   font-weight: 900;

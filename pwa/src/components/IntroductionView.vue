@@ -75,7 +75,7 @@ onMounted(async () => {
 }
 
 .scroll-tracker {
-  background: $grey-20;
+  background: $safe-stone;
   transform-origin: left;
   height: 100%;
   width: 50%;

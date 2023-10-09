@@ -6,13 +6,12 @@
     <div class="intro">
       <div class="left-side">
         <div class="description">
-          <h2>ApeCoin<br class="mobile-hidden" />Payments</h2>
+          <h2>ApeCoin<br />Payments</h2>
           <p>
-            Connect your safe wallet and chose your preferred payment method.
-          </p>
-          <p>
-            Use ApeCoin for transaction fees and optimise your gas fees and
-            costs.
+            Connect your Safe {Wallet}<br />
+            Select your payment method<br />
+            Use ApeCoin for transaction fees<br />
+            Optimise your gas costs off-chain
           </p>
           <p>
             <a
@@ -33,87 +32,29 @@
           <button class="tab-button" @click="swtichTab('multi-sig')">
             Multi-Sig
           </button>
-          <button class="tab-button" @click="swtichTab('credit-card')">
+          <button class="tab-button" @click="swtichTab('credit')">
             Credit Card
           </button>
         </div>
-        <div class="card">
-          <h3>ApeSafe</h3>
-          <p>This is some text</p>
-          <p>a form will live here</p>
-          <div class="button-container">
-            <button class="grey-button" v-if="!account" @click="connectWallet">
-              Connect
-            </button>
-            <button class="blue-button" @click="makePayment">Pay Now</button>
-          </div>
-        </div>
+        <CryptoPayment v-if="tab === 'crypto'" />
+        <MultiSig v-if="tab === 'multi-sig'" />
+        <CreditCard v-if="tab === 'credit'" />
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
-import { storeToRefs } from "pinia";
-import { useStore } from "@/store";
+import { ref } from "vue";
 import MiniMenu from "./MiniMenu.vue";
-
-const store = useStore();
-const { account } = storeToRefs(store);
+import CryptoPayment from "./CryptoPayment.vue";
+import MultiSig from "./MultiSig.vue";
+import CreditCard from "./CreditCard.vue";
 
 const tab = ref("crypto");
-const swtichTab = async (type) => {
-  console.log("swtichTab", type);
+
+const swtichTab = (type) => {
   tab.value = type;
 };
-
-const makePayment = async () => {
-  console.log("makePayment");
-};
-
-const connectWallet = async () => {
-  store.setLoading(true);
-  try {
-    const { ethereum } = window;
-    if (!ethereum) {
-      alert("Please connect wallet to continue!");
-      return;
-    }
-    const [accountAddress] = await ethereum.request({
-      method: "eth_requestAccounts",
-    });
-
-    console.log("accountAddress", accountAddress);
-
-    if (accountAddress) {
-      store.setAccount(accountAddress);
-      store.setLoading(false);
-    }
-  } catch (error) {
-    console.log("Error", error);
-    store.setLoading(false);
-  }
-};
-
-const checkIfWalletIsConnected = async () => {
-  try {
-    const { ethereum } = window;
-    if (!ethereum) {
-      console.log(`Please connect wallet to continue!`);
-      return;
-    }
-    const accounts = await ethereum.request({ method: "eth_accounts" });
-    if (accounts.length !== 0) {
-      store.setAccount(accounts[0]);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-onMounted(async () => {
-  await checkIfWalletIsConnected();
-});
 </script>
 <style lang="scss" scoped>
 @import "@/assets/styles/variables.scss";
@@ -123,14 +64,16 @@ onMounted(async () => {
   flex-direction: column;
   height: 55rem;
   color: $black;
-  background: $grey-20;
+  background: $safe-stone;
   background-image: url("../assets/images/large_blue_graphic.png"),
-    url("../assets/images/YellowCircle.png");
-  background-size: auto, auto;
-  background-repeat: no-repeat, no-repeat;
+    url("../assets/images/YellowCircle.png"),
+    url("../assets/images/GreySwirlBG.png");
+  background-size: auto, auto, contain;
+  background-repeat: no-repeat, no-repeat, no-repeat;
   background-position:
     top 10em left -3em,
-    right 8em bottom 6em;
+    right 47% bottom 2em,
+    right 0 top 0;
   padding: 0;
 
   @include breakpoint($break-sm) {
@@ -150,6 +93,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: row;
   @include breakpoint($break-sm) {
+    width: 100%;
     flex-direction: column;
     padding-top: 50px;
   }
@@ -161,6 +105,11 @@ onMounted(async () => {
   align-content: center;
   align-items: center;
   justify-content: center;
+
+  @include breakpoint($break-sm) {
+    width: 100%;
+  }
+
   .description {
     margin: 0 auto;
     padding: 30px;
@@ -174,40 +123,36 @@ onMounted(async () => {
   align-content: center;
   align-items: center;
   justify-content: center;
+
+  @include breakpoint($break-sm) {
+    width: 100%;
+  }
   .tab-button {
     color: $black;
     background: transparent;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 20px;
+    line-height: 22px;
+    font-weight: 600;
+    font-style: normal;
+    text-align: center;
+    text-decoration: none;
+    text-decoration-line: none;
     margin: 5px;
     border: 0;
-    text-decoration: none;
-    transition: text-decoration 0.6s;
+    padding-bottom: 0.25rem;
+    transition: transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
     cursor: pointer;
     margin: 0;
 
     &:hover {
-      color: $ape-blue;
-      text-decoration: underline;
+      color: $black;
+      text-decoration: line-through;
+      cursor: pointer;
     }
     &:focus,
     &:focus-visible {
-      text-decoration: underline;
       outline: none;
     }
-  }
-  .card {
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: center;
-    justify-content: center;
-    padding: 2em;
-    border-radius: 30px;
-    border: 1px solid $grey-100;
-    color: $black;
-    background: $white;
   }
 }
 .mobile-hidden {
