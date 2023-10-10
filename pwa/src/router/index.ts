@@ -5,7 +5,7 @@ import { nextTick } from "vue";
 import routes from "./routes";
 
 const baseURL = "";
-const baseTitle = "The Ape Inn";
+const baseTitle = "ApePay";
 
 const router = createRouter({
   history: createWebHistory(baseURL),

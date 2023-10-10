@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { userObject } from "@/models/user";
 import { transactionObject } from "@/models/transaction";
 import { notificationObject } from "@/models/notification";
 
@@ -8,6 +9,7 @@ export const useStore = defineStore({
     loading: false,
     connected: false,
     wallet: {},
+    user: <userObject>{},
     account: "",
     balance: 0,
     transaction: <transactionObject>{},
@@ -24,6 +26,9 @@ export const useStore = defineStore({
     },
     getWallet(state) {
       return state.wallet;
+    },
+    getUser(state) {
+      return state.user;
     },
     getAccount(state) {
       return state.account;
@@ -53,6 +58,9 @@ export const useStore = defineStore({
     },
     setWallet(wallet: object) {
       this.wallet = wallet;
+    },
+    setUser(user: userObject) {
+      this.user = user;
     },
     setAccount(account: string) {
       this.account = account;

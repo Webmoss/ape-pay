@@ -1,8 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
-
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
-
 import Vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
@@ -16,7 +14,8 @@ export default defineConfig({
       manifest: {
         name: "ApePay",
         short_name: "ApePay",
-        description: "",
+        description:
+          "Welcome to the ApeCoin Payment Gateway, a secure online portal for merchants and institutions.",
         theme_color: "#0e28e4",
         display: "standalone",
         orientation: "portrait",

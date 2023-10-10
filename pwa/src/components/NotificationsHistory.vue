@@ -30,9 +30,7 @@
       </template>
       <template v-else>
         <tr colspan="9">
-          <td colspan="9">
-            No notification results available...please try agai
-          </td>
+          <td colspan="9">No notification results available</td>
         </tr>
       </template>
     </table>
@@ -40,46 +38,46 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { useStore } from "@/store";
+  import { storeToRefs } from "pinia";
+  import { useStore } from "@/store";
 
-const store = useStore();
-const { notifications } = storeToRefs(store);
+  const store = useStore();
+  const { notifications } = storeToRefs(store);
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/variables.scss";
-@import "@/assets/styles/mixins.scss";
+  @import "@/assets/styles/variables.scss";
+  @import "@/assets/styles/mixins.scss";
 
-.card {
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
-  padding: 1em;
-  border-radius: 16px;
-  border: 1px solid $white;
-  color: $black;
-  background: $white;
-
-  table {
-    width: 100%;
+  .card {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
     border-radius: 16px;
-    border: 1px solid $black;
-    border-collapse: collapse;
-  }
-
-  th,
-  td {
     border: 1px solid $white;
-    border-collapse: collapse;
+    color: $black;
+    background: $white;
+
+    table {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid $black;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid $white;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      background-color: $white;
+      padding: 4px 6px;
+    }
   }
-  th,
-  td {
-    background-color: $white;
-    padding: 4px 6px;
-  }
-}
 </style>
