@@ -43,9 +43,7 @@
       </div>
       <div class="button-container margin-top">
         <button class="grey-button" @click="cancel">Clear</button>
-        <button class="green-button" @click="swtichTab('payment')">
-          Confirm
-        </button>
+        <button class="blue-button" @click="swtichTab('payment')">Next</button>
       </div>
     </form>
     <form v-if="tab === 'payment'">
@@ -92,7 +90,7 @@
         <button class="grey-button" @click="swtichTab('multi-sig')">
           Back
         </button>
-        <button v-if="connected" class="blue-button" @click="makePayment">
+        <button v-if="connected" class="green-button" @click="makePayment">
           Pay Now
         </button>
       </div>
@@ -183,8 +181,8 @@
   @import "@/assets/styles/mixins.scss";
 
   .card {
-    width: 400px;
-    height: 450px;
+    width: 405px;
+    height: 470px;
     display: flex;
     flex-direction: column;
     align-content: center;

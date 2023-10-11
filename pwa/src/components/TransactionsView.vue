@@ -5,14 +5,14 @@
         <div class="button-container">
           <button
             class="tab-button"
-            :class="tab === 'transactions' ? 'active' : ''"
+            :class="tab === 'transactions' ? '' : 'active'"
             @click="swtichTab('transactions')"
           >
             Transactions
           </button>
           <button
             class="tab-button"
-            :class="tab === 'notifications' ? 'active' : ''"
+            :class="tab === 'notifications' ? '' : 'active'"
             @click="swtichTab('notifications')"
           >
             Notifications
@@ -54,11 +54,10 @@
     height: 55rem;
     color: $white;
     background: $black;
-    background-image: url("../assets/images/YellowCircle.png"),
-      url("../assets/images/BlueLine.png");
-    background-size: auto, auto;
-    background-repeat: no-repeat, no-repeat;
-    background-position: right 5em top 1em, left 0 top 10%;
+    background-image: url("../assets/images/BlueLine.png");
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: left 0 top 10%;
     padding: 0;
 
     @include breakpoint($break-sm) {

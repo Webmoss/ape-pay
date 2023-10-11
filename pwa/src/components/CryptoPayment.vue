@@ -42,7 +42,7 @@
       </div>
       <div class="button-container">
         <button class="grey-button" @click="cancel">Clear</button>
-        <button v-if="connected" class="blue-button" @click="makePayment">
+        <button v-if="connected" class="green-button" @click="makePayment">
           Pay Now
         </button>
       </div>
@@ -114,7 +114,7 @@
   @import "@/assets/styles/mixins.scss";
 
   .card {
-    width: 400px;
+    width: 405px;
     height: 450px;
     display: flex;
     flex-direction: column;

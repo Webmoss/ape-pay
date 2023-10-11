@@ -21,12 +21,21 @@
               alt="About ApeCoin"
               >ApeCoin Powered →
             </a>
+            <br />
+            <a
+              class="link"
+              href="https://tableland.xyz/"
+              target="_blank"
+              alt="About Tableland"
+              >Tableland NFT Receipts →
+            </a>
+            <br />
             <a
               class="link"
               href="https://xmtp.org/"
               target="_blank"
               alt="About XMTP Chat"
-              >XMTP Chat →
+              >XMTP Messaging →
             </a>
           </p>
         </div>

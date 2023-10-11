@@ -132,113 +132,124 @@ p {
   }
 }
 
-.input-row {
+
+
+form {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-content: center;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin: 0 auto;
 
-  label {
-    color: $safe-stone;
-    font-size: 18px;
-    font-weight: 500;
-    font-style: normal;
-    text-align: left;
-    margin: 0 0 4px 4px;
+  .input-row {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  
+    label {
+      color: $safe-stone;
+      font-size: 18px;
+      font-weight: 500;
+      font-style: normal;
+      text-align: left;
+      margin: 0 0 4px 4px;
+    }
+    input {
+      width: 100%;
+      height: 30px;
+      color: $black;
+      background-color: #fdfdfd;
+      border: 1px solid #d9d9d9;
+      border-radius: 12px;
+      letter-spacing: 1px;
+      font-size: 14px;
+      line-height: 20px;
+      margin-bottom: 5px;
+      padding: 6px 8px;
+      text-align: left;
+    }
   }
-  input {
-    width: 360px;
-    height: 30px;
+  
+  .checkbox-row {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin: 30px auto;
+  
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      margin: 0 8px 0 16px;
+      accent-color: $ape-blue;
+      cursor: pointer;
+    }
+  
+    .checkbox-label {
+      flex-grow: 1;
+      width: auto;
+      color: $safe-stone;
+      font-size: 18px;
+      font-weight: 500;
+      font-style: normal;
+      text-align: left;
+      cursor: pointer;
+    }
+  }
+  
+  input::placeholder {
+    color: #a8a8a8;
+    letter-spacing: 1px;
+  }
+  
+  input:read-only {
+    color: #1a1a1a;
+    border: 1px dashed #e0e0e0;
+    letter-spacing: 1px;
+    cursor: not-allowed;
+  }
+  
+  input:focus {
+    border: 1px solid $safe-orange;
+    outline: none;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 60px;
     color: $black;
     background-color: #fdfdfd;
     border: 1px solid #d9d9d9;
     border-radius: 12px;
     letter-spacing: 1px;
     font-size: 14px;
-    line-height: 20px;
+    line-height: 24px;
     margin-bottom: 5px;
-    padding: 6px 8px;
+    padding: 2px 10px;
     text-align: left;
+    resize: none;
   }
-}
-
-.checkbox-row {
-  width: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-  margin: 30px auto;
-
-  .checkbox-input {
-    width: 20px;
-    height: 20px;
-    margin: 0 8px 0 16px;
-    accent-color: $ape-blue;
-    cursor: pointer;
+  
+  textarea::placeholder {
+    color: #a8a8a8;
+    letter-spacing: 1px;
+  }
+  
+  textarea:focus {
+    border: 1px solid $safe-orange;
+    outline: none;
   }
 
-  .checkbox-label {
-    flex-grow: 1;
-    width: auto;
-    color: $safe-stone;
-    font-size: 18px;
-    font-weight: 500;
-    font-style: normal;
-    text-align: left;
-    cursor: pointer;
-  }
-}
-
-input::placeholder {
-  color: #a8a8a8;
-  letter-spacing: 1px;
-}
-
-input:read-only {
-  color: #1a1a1a;
-  border: 1px dashed #e0e0e0;
-  letter-spacing: 1px;
-  cursor: not-allowed;
-}
-
-input:focus {
-  border: 1px solid $safe-orange;
-  outline: none;
-}
-
-textarea {
-  width: 360px;
-  height: 60px;
-  color: $black;
-  background-color: #fdfdfd;
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
-  letter-spacing: 1px;
-  font-size: 14px;
-  line-height: 24px;
-  margin-bottom: 5px;
-  padding: 2px 10px;
-  text-align: left;
-  resize: none;
-}
-
-textarea::placeholder {
-  color: #a8a8a8;
-  letter-spacing: 1px;
-}
-
-textarea:focus {
-  border: 1px solid $safe-orange;
-  outline: none;
-}
-
-form {
   .button-container {
     width: 100%;
     display: flex;
