@@ -45,30 +45,116 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ethers } from "ethers";
-  import { onMounted } from "vue";
+  import { ref, onMounted, onUnmounted } from "vue";
   import { storeToRefs } from "pinia";
   import { useStore } from "../store/index.js";
   import MiniMenu from "./MiniMenu.vue";
+  import { ethers } from "ethers";
+  import {
+    ADAPTER_EVENTS,
+    CHAIN_NAMESPACES,
+    // SafeEventEmitterProvider,
+    // UserInfo,
+    WALLET_ADAPTERS,
+  } from "@web3auth/base";
+  import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+  import { Web3AuthOptions } from "@web3auth/modal";
+  
+  import {
+    Web3AuthModalPack,
+    Web3AuthConfig,
+    Web3AuthEventListener,
+  } from "@safe-global/auth-kit";
+
+  import Safe, { EthersAdapter, SafeFactory } from "@safe-global/protocol-kit";
+  
+  import SafeApiKit, {
+    SafeServiceInfoResponse,
+    OwnerResponse,
+  } from "@safe-global/api-kit";
 
   const store = useStore();
   const { wallet } = storeToRefs(store);
 
+  const web3AuthModalPack = ref();
+  // const safeAuthSignInResponse = ref();
+
+  const options: Web3AuthOptions = {
+    clientId: import.meta.env.VITE_WEB3AUTH_CLIENT_ID || "",
+    web3AuthNetwork: "testnet",
+    chainConfig: {
+      chainNamespace: CHAIN_NAMESPACES.EIP155,
+      chainId: "0x5",
+      rpcTarget: "https://rpc.ankr.com/eth_goerli",
+    },
+    uiConfig: {
+      theme: { primary: "blue" },
+      loginMethodsOrder: ["google", "facebook"],
+    },
+  };
+
+  const modalConfig = {
+    [WALLET_ADAPTERS.TORUS_EVM]: {
+      label: "torus",
+      showOnModal: false,
+    },
+    [WALLET_ADAPTERS.METAMASK]: {
+      label: "metamask",
+      showOnDesktop: true,
+      showOnMobile: false,
+    },
+  };
+
+  const openloginAdapter = new OpenloginAdapter({
+    loginSettings: {
+      mfaLevel: "mandatory",
+    },
+    adapterSettings: {
+      uxMode: "popup",
+      whiteLabel: {
+        appName: "Safe",
+      },
+    },
+  });
+
+  const web3AuthConfig: Web3AuthConfig = {
+    txServiceUrl: "https://safe-transaction-goerli.safe.global",
+  };
+
+  const connectedHandler: Web3AuthEventListener = (data) =>
+    console.log("CONNECTED", data);
+  const disconnectedHandler: Web3AuthEventListener = (data) =>
+    console.log("DISCONNECTED", data);
+  const erroredHandler: Web3AuthEventListener = (data) =>
+    console.log("ERRORED", data);
+
   const signIn = async () => {
-    // store.setLoading(true);
-    // try {
-    //   const safeWallet = await safeSignIn();
-    //   console.log("Safe Wallet Sign In", safeWallet);
-    //   if (safeWallet) {
-    //     store.setWallet(safeWallet);
-    //     console.log("Wallet :", wallet.value);
-    //     store.setConnected(true);
-    //   }
-    // } catch (error) {
-    //   console.log("Error", error);
-    // } finally {
-    //   store.setLoading(false);
-    // }
+    store.setLoading(true);
+    try {
+      if (!web3AuthModalPack.value) return;
+
+      const signInInfo = await web3AuthModalPack.value.signIn();
+      console.log("SIGN IN RESPONSE: ", signInInfo);
+
+      // AuthKitSignInData {
+      //   eoa: string // The safe signer
+      //   safes?: string[] // The list of associated Safe addresses
+      // }
+
+      const userInfo = await web3AuthModalPack.value.getUserInfo();
+      console.log("USER INFO: ", userInfo);
+
+      if (userInfo) {
+        store.setWallet(signInInfo.safes[0]);
+        store.setUser(userInfo);
+        console.log("Wallet :", wallet.value);
+        store.setConnected(true);
+      }
+    } catch (error) {
+      console.log("Error", error);
+    } finally {
+      store.setLoading(false);
+    }
   };
 
   const signUp = async () => {
@@ -88,19 +174,51 @@
     // }
   };
 
+  // const signTxn = async () => {
+  //   store.setLoading(true);
+  //   try {
+  //     const provider = new ethers.providers.Web3Provider(
+  //       web3AuthModalPack.value.getProvider()
+  //     );
+  //     const signer = provider.getSigner();
+
+  //     const ethAdapter = new EthersAdapter({
+  //       ethers,
+  //       signerOrProvider: signer || provider,
+  //     });
+
+  //     const safeSDK = await Safe.create({
+  //       ethAdapter,
+  //       safeAddress,
+  //     });
+  //     // Create a Safe transaction with the provided parameters
+  //     const safeTransactionData: MetaTransactionData = {
+  //       to: "0x",
+  //       data: "0x",
+  //       value: ethers.utils.parseUnits("0.0001", "ether").toString(),
+  //     };
+
+  //     const safeTransaction = await safeSDK.createTransaction({
+  //       safeTransactionData,
+  //     });
+  //   } catch (error) {
+  //     console.log("Error", error);
+  //   } finally {
+  //     store.setLoading(false);
+  //   }
+  // };
+
   const signOut = async () => {
-    // store.setLoading(true);
-    // try {
-    //   const walletLog = await safeSignOut();
-    //   console.log("Safe Wallet Signed Out", walletLog);
-    //   store.setWallet(null);
-    //   console.log("Wallet :", wallet.value);
-    //   store.setConnected(false);
-    // } catch (error) {
-    //   console.log("Error", error);
-    // } finally {
-    //   store.setLoading(false);
-    // }
+    store.setLoading(true);
+    try {
+      await web3AuthModalPack.value.signOut();
+      store.setWallet({});
+      store.setConnected(false);
+    } catch (error) {
+      console.log("Error", error);
+    } finally {
+      store.setLoading(false);
+    }
   };
 
   const checkSafeWalletConnected = async () => {
@@ -113,9 +231,52 @@
       const safeOwner = provider.getSigner(0);
       console.log("Safe Owner", safeOwner);
 
-      if (safeOwner) {
-        store.setConnected(true);
-      }
+      /* Instantiate and initialize the pack */
+      const newweb3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
+      await newweb3AuthModalPack.init({
+        options,
+        adapters: [openloginAdapter],
+        modalConfig,
+      });
+
+      web3AuthModalPack.value = newweb3AuthModalPack;
+
+      web3AuthModalPack.value.subscribe(
+        ADAPTER_EVENTS.CONNECTED,
+        connectedHandler
+      );
+      web3AuthModalPack.value.subscribe(
+        ADAPTER_EVENTS.DISCONNECTED,
+        disconnectedHandler
+      );
+      web3AuthModalPack.value.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
+
+      // Instantiate an EthAdapter
+      const ethAdapter = new EthersAdapter({
+        ethers,
+        signerOrProvider: safeOwner,
+      });
+
+      // Initialize the Safe API Kit
+      const txServiceUrl = "https://safe-transaction-goerli.safe.global";
+      const safeService = new SafeApiKit({ txServiceUrl, ethAdapter });
+      const serviceInfo: SafeServiceInfoResponse =
+        await safeService.getServiceInfo();
+      console.log("serviceInfo", serviceInfo);
+
+      const ownerAddress = (await safeOwner.getAddress()).toString();
+      const safes: OwnerResponse = await safeService.getSafesByOwner(
+        ownerAddress
+      );
+      console.log("safes", safes);
+
+      // Initialize the Protocol Kit
+      // const safeFactory = await SafeFactory.create({ ethAdapter });
+      // const safeSdk = await Safe.create({ ethAdapter, ownerAddress });
+
+      // if (safeOwner) {
+      //   store.setConnected(true);
+      // }
     } catch (error) {
       console.log("Error", error);
     } finally {
@@ -125,6 +286,21 @@
 
   onMounted(async () => {
     await checkSafeWalletConnected();
+  });
+
+  onUnmounted(async () => {
+    web3AuthModalPack.value.unsubscribe(
+      ADAPTER_EVENTS.CONNECTED,
+      connectedHandler
+    );
+    web3AuthModalPack.value.unsubscribe(
+      ADAPTER_EVENTS.DISCONNECTED,
+      disconnectedHandler
+    );
+    web3AuthModalPack.value.unsubscribe(
+      ADAPTER_EVENTS.DISCONNECTED,
+      disconnectedHandler
+    );
   });
 </script>
 <style lang="scss" scoped>
