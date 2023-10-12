@@ -9,6 +9,7 @@ export const useStore = defineStore({
     loading: false,
     connected: false,
     wallet: {},
+    safes: [] as string[],
     user: <userObject>{},
     account: "",
     balance: 0,
@@ -26,6 +27,9 @@ export const useStore = defineStore({
     },
     getWallet(state) {
       return state.wallet;
+    },
+    getSafes(state) {
+      return state.safes;
     },
     getUser(state) {
       return state.user;
@@ -58,6 +62,9 @@ export const useStore = defineStore({
     },
     setWallet(wallet: object) {
       this.wallet = wallet;
+    },
+    setSafes(safes: string[]) {
+      this.safes = safes;
     },
     setUser(user: userObject) {
       this.user = user;

@@ -8,9 +8,9 @@
       <div class="container">
         <div>
           <div class="title">
-            Safe<br class="mobile-hidden" />
-            ApeCoin<br class="mobile-hidden" />
-            Payment<br class="mobile-hidden" />
+            Safe<br />
+            ApeCoin<br />
+            Payment<br />
             Solutions
           </div>
         </div>
@@ -25,18 +25,15 @@
   </div>
 </template>
 <script setup>
-import "https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js";
 import { onMounted } from "vue";
 
 onMounted(async () => {
   const scrollTracker = document.querySelector(".scroll-tracker");
-  // eslint-disable-next-line no-undef
   const scrollTrackingTimeline = new ScrollTimeline({
     source: document.scrollingElement,
     orientation: "block",
     scrollOffsets: [CSS.percent(0), CSS.px(700)],
   });
-
   if (scrollTracker) {
     scrollTracker.animate(
       { transform: ["scaleX(0)", "scaleX(1)"] },
@@ -62,10 +59,11 @@ onMounted(async () => {
   transform-origin: left;
 
   @include breakpoint($break-sm) {
-    height: 35rem;
+    height: 85dvh;
+    background-image: none;
   }
   @include breakpoint($break-md) {
-    height: 50rem;
+    height: 95dvh;
   }
 }
 
@@ -81,6 +79,9 @@ onMounted(async () => {
   transform-origin: left;
   height: 100%;
   width: 50%;
+  @include breakpoint($break-sm) {
+    display: none;
+  }
 }
 
 .grey-div {
@@ -89,6 +90,9 @@ onMounted(async () => {
   background-repeat: no-repeat;
   background-position: left 0 top 51%;
   width: 80%;
+  @include breakpoint($break-sm) {
+    width: 100%;
+  }
 }
 .container {
   justify-content: space-evenly;
@@ -110,11 +114,13 @@ onMounted(async () => {
   @include breakpoint($break-sm) {
     font-weight: 400;
     font-size: 34px;
-    margin: 80px 30px 0 0;
+    line-height: 40px;
+    margin: 50px 0 0 10px;
   }
 
   @include breakpoint($break-md) {
     font-size: 48px;
+    line-height: 54px;
     max-width: 650px;
   }
 }
@@ -130,15 +136,16 @@ onMounted(async () => {
   margin: 50px 50px 196px 50px;
 
   @include breakpoint($break-sm) {
-    font-size: 22px;
-    margin: 35px 30px 0 0;
+    font-size: 20px;
+    line-height: 28px;
+    margin: 15px 0 0 0;
   }
 
   @include breakpoint($break-md) {
     font-size: 30px;
     line-height: 36px;
     max-width: 550px;
-    margin: 60px 33px 96px 0;
+    margin: 30px 10px 0 10px;
   }
 }
 

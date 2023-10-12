@@ -65,8 +65,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
+    @include breakpoint($break-sm) {
+      padding: 5px 10px 0;
+    }
     @include breakpoint($break-md) {
-      padding: 1rem 30px 0;
+      padding: 10px 20px 0;
     }
   }
 
@@ -83,6 +86,9 @@
     text-decoration: none;
     margin-bottom: -5px;
     margin-left: 20px;
+    @include breakpoint($break-sm) {
+      margin: -5px 0 0 0;
+    }
   }
 
   .menu {
@@ -121,12 +127,6 @@
   .menu-button-black::before,
   .menu-button-black::after {
     background-color: $grey-100;
-  }
-
-  .menu-button-white,
-  .menu-button-white::before,
-  .menu-button-white::after {
-    background-color: $white;
   }
 
   .menu-button,
@@ -201,7 +201,7 @@
     }
 
     #menu-toggle:checked ~ .menu-black li {
-      border-top: 1px solid $white;
+      border-top: 1px solid $black;
     }
 
     .menu > li {
@@ -213,7 +213,8 @@
     }
 
     .menu-black {
-      border-bottom: 1px solid #ffffff;
+      background-color: $safe-stone;
+      border-bottom: 1px solid $black;
     }
   }
 </style>

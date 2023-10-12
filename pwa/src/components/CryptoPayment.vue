@@ -77,35 +77,35 @@
   };
 
   const makePayment = async () => {
-    console.log("makePayment");
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        throw Error();
-      }
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const destination = form.value.address;
+    // console.log("makePayment");
+    // try {
+    //   const { ethereum } = window;
+    //   if (!ethereum) {
+    //     throw Error();
+    //   }
+    //   const provider = new ethers.providers.Web3Provider(ethereum);
+    //   const signer = provider.getSigner();
+    //   const destination = form.value.address;
 
-      /* Convert 1 ether to wei */
-      // const amount = ethers.utils.parseEther("0.001");
-      const amount = ethers.utils.parseEther(form.value.amount);
+    //   /* Convert 1 ether to wei */
+    //   // const amount = ethers.utils.parseEther("0.001");
+    //   const amount = ethers.utils.parseEther(form.value.amount);
 
-      /* Submit transaction to the blockchain */
-      const tx = await signer.sendTransaction({
-        to: destination,
-        value: amount,
-        maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
-        maxFeePerGas: "6000000000000", // Max fee per gas
-      });
+    //   /* Submit transaction to the blockchain */
+    //   const tx = await signer.sendTransaction({
+    //     to: destination,
+    //     value: amount,
+    //     maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
+    //     maxFeePerGas: "6000000000000", // Max fee per gas
+    //   });
 
-      /* Wait for transaction to be mined */
-      const receipt = await tx.wait();
+    //   /* Wait for transaction to be mined */
+    //   const receipt = await tx.wait();
 
-      return receipt;
-    } catch (error) {
-      return error as string;
-    }
+    //   return receipt;
+    // } catch (error) {
+    //   return error as string;
+    // }
   };
 </script>
 
@@ -115,7 +115,7 @@
 
   .card {
     width: 405px;
-    height: 450px;
+    height: 470px;
     display: flex;
     flex-direction: column;
     align-content: center;
