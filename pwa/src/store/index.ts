@@ -8,7 +8,7 @@ export const useStore = defineStore({
   state: () => ({
     loading: false,
     connected: false,
-    wallet: {},
+    wallet: "",
     safes: [] as string[],
     user: <userObject>{},
     account: "",
@@ -60,7 +60,7 @@ export const useStore = defineStore({
     setConnected(connected: boolean) {
       this.connected = connected;
     },
-    setWallet(wallet: object) {
+    setWallet(wallet: string) {
       this.wallet = wallet;
     },
     setSafes(safes: string[]) {

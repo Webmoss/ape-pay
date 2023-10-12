@@ -7,15 +7,19 @@
       <div class="left-side">
         <div class="card">
           <h3>Safe {Wallet}</h3>
-          <p>
+          <p v-if="!wallet">
             Use Safe {{ "{WALLET}" }} to create, access and securely manage user
             accounts and multi-sig crypto wallets
           </p>
+          <p v-else>
+            <span class="wallet-address"><span class="wallet-label">Safe {Wallet}</span>  {{ safes[0] }}</span>
+            <span class="wallet-address"><span class="wallet-label">ETH {Wallet}</span> {{ wallet }}</span>
+          </p>
           <div class="button-container">
-            <button v-if="!wallet" @click="signUp">Signup</button>
             <button v-if="!connected" class="green-button" @click="signIn">
               Connect
             </button>
+            <button v-if="!wallet" class="grey-button" @click="signUp">SignUp</button>
             <button v-if="connected" class="grey-button" @click="signOut">
               Logout
             </button>
@@ -67,10 +71,10 @@ import { Web3AuthModalPack, Web3AuthConfig, Web3AuthEventListener } from '@safe-
 import MiniMenu from "./MiniMenu.vue";
 
 const store = useStore();
-const { connected, wallet } = storeToRefs(store);
+const { connected, wallet, safes, user } = storeToRefs(store);
 
 const provider = ref<IProvider | any>(false);
-const web3AuthModalPack = ref();
+const storeWeb3AuthModalPack = ref();
 // const safeAuthSignInResponse = ref();
 
 const clientId = "BBfk8wSH3Kn6HREZ2PQ41USY9PzLvR56q0PJ9fxDxD8TuiFjfWIw-rrbjGynxx4GkRc2vg8lm2UPvSk-WnDunI4"
@@ -151,26 +155,46 @@ const erroredHandler: Web3AuthEventListener = (data) => console.log("ERRORED", d
 const signIn = async () => {
   store.setLoading(true);
   try {
-    if (!web3AuthModalPack.value) return;
-    console.log("web3AuthModalPack.value",web3AuthModalPack.value);
+    /* Instantiate and initialize the pack */
+    const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
+    await web3AuthModalPack.init({
+      options,
+      adapters: [openloginAdapter],
+      modalConfig,
+    });
 
-    const signInInfo = await web3AuthModalPack.value.signIn();
+    storeWeb3AuthModalPack.value = web3AuthModalPack;
+
+    web3AuthModalPack.subscribe(
+      ADAPTER_EVENTS.CONNECTED,
+      connectedHandler
+    );
+    web3AuthModalPack.subscribe(
+      ADAPTER_EVENTS.DISCONNECTED,
+      disconnectedHandler
+    );
+    web3AuthModalPack.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
+
+    const signInInfo = await web3AuthModalPack.signIn();
     console.log("SIGN IN RESPONSE: ", signInInfo);
-
+    
     // AuthKitSignInData {
     //   eoa: string // The safe signer
     //   safes?: string[] // The list of associated Safe addresses
     // }
 
-    const userInfo = await web3AuthModalPack.value.getUserInfo();
+    if (signInInfo) {
+      store.setWallet(signInInfo.eoa);
+      store.setSafes(signInInfo.safes);
+      store.setConnected(true);
+    }
+
+    const userInfo = await web3AuthModalPack.getUserInfo();
     console.log("USER INFO: ", userInfo);
 
     if (userInfo) {
-      store.setWallet(signInInfo.eoa);
-      store.setSafes(signInInfo.safes);
       store.setUser(userInfo);
-      console.log("Wallet: ", wallet.value);
-      store.setConnected(true);
+      console.log("User Info: ", user.value);
     }
   } catch (error) {
     console.log("Error", error);
@@ -197,9 +221,18 @@ const signUp = async () => {
 };
 
 const signOut = async () => {
+  console.log("signOut")
   try {
-    await web3AuthModalPack.value.signOut();
-    store.setWallet({});
+    /* Instantiate and initialize the pack */
+    const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
+    await web3AuthModalPack.init({
+      options,
+      adapters: [openloginAdapter],
+      modalConfig,
+    });
+    await web3AuthModalPack.signOut();
+    store.setWallet(null);
+    store.setUser(null);
     store.setConnected(false);
   } catch (error) {
     console.log("Error", error);
@@ -253,26 +286,7 @@ const signOut = async () => {
       // const safeOwner = provider.getSigner(0);
       // console.log("Safe Owner", safeOwner);
 
-      /* Instantiate and initialize the pack */
-      const newweb3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-      await newweb3AuthModalPack.init({
-        options,
-        adapters: [openloginAdapter],
-        modalConfig,
-      });
-
-      web3AuthModalPack.value = newweb3AuthModalPack;
-
-      web3AuthModalPack.value.subscribe(
-        ADAPTER_EVENTS.CONNECTED,
-        connectedHandler
-      );
-      web3AuthModalPack.value.subscribe(
-        ADAPTER_EVENTS.DISCONNECTED,
-        disconnectedHandler
-      );
-      web3AuthModalPack.value.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
-
+      
       // Instantiate an EthAdapter
       // const ethAdapter = new EthersAdapter({
       //   ethers,
@@ -307,24 +321,22 @@ const signOut = async () => {
   };
 
   onMounted(async () => {
-    await checkSafeWalletConnected();
+    // await checkSafeWalletConnected();    
   });
 
   onUnmounted(async () => {
-    if(web3AuthModalPack.value){
-      web3AuthModalPack.value.unsubscribe(
-        ADAPTER_EVENTS.CONNECTED,
-        connectedHandler
-      );
-      web3AuthModalPack.value.unsubscribe(
-        ADAPTER_EVENTS.DISCONNECTED,
-        disconnectedHandler
-      );
-      web3AuthModalPack.value.unsubscribe(
-        ADAPTER_EVENTS.DISCONNECTED,
-        disconnectedHandler
-      );
-    }
+    // storeWeb3AuthModalPack.value.unsubscribe(
+    //   ADAPTER_EVENTS.CONNECTED,
+    //   connectedHandler
+    // );
+    // storeWeb3AuthModalPack.value.unsubscribe(
+    //   ADAPTER_EVENTS.DISCONNECTED,
+    //   disconnectedHandler
+    // );
+    // storeWeb3AuthModalPack.value.unsubscribe(
+    //   ADAPTER_EVENTS.DISCONNECTED,
+    //   disconnectedHandler
+    // );    
   });
 
 </script>
@@ -408,8 +420,8 @@ const signOut = async () => {
         font-size: 36px;
         line-height: 42px;
         text-align: left;
-        margin: 0 0 40px;
-        padding: 4px 8px 8px;
+        margin: 0 0 10px;
+        padding: 6px 8px 8px;
         border-radius: 5px;
         color: $black;
         background: $safe-green;
@@ -428,10 +440,30 @@ const signOut = async () => {
       }
 
       p {
+        height: 90px;
         font-size: 26px;
         line-height: 30px;
         text-align: center;
         margin: 0 0 30px;
+
+        .wallet-address {
+          display: flex;
+          flex-direction: row;
+          align-content: center;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 15px;
+          line-height: 20px;
+          text-align: left;
+          margin:10px 0 0;
+          span.wallet-label {
+            padding: 2px 4px 4px;
+            border-radius: 5px;
+            color: $black;
+            background: $safe-stone;
+            margin-right: 8px;
+          }
+        }
       }
     }
   }
@@ -459,8 +491,34 @@ const signOut = async () => {
         padding: 20px;
       }
 
+      h1 {
+        font-family: "TWKEverett";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 60px;
+        line-height: 68px;
+        text-align: left;
+        margin: 50px 0 20px;
+        @include breakpoint($break-sm) {
+          font-size: 30px;
+          line-height: 34px;
+          margin: 0 0 26px;
+        }
+        @include breakpoint($break-md) {
+          font-size: 40px;
+          line-height: 48px;
+          margin: 30px 0;
+        }
+      }
+
       p {
-        text-align: center;
+        font-family: "TWKEverett";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 30px;
+        line-height: 42px;
+        text-align: left;
+        margin: 0 0 30px;
       }
     }
   }

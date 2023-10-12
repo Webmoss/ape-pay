@@ -8,10 +8,10 @@
         <div class="description">
           <h2>ApeCoin<br />Payments</h2>
           <p>
-            Connect your Safe {Wallet}<br />
-            Select your payment method<br />
-            Use ApeCoin for transaction fees<br />
-            Optimise your gas costs off-chain
+            1. Connect your Safe {Wallet}<br />
+            2. Select your payment method<br />
+            3. Use ApeCoin for transaction fees<br />
+            4. Optimise your gas costs off-chain
           </p>
           <p>
             <a
@@ -134,6 +134,32 @@
     .description {
       margin: 0 auto;
       padding: 30px;
+
+      h2 {
+        font-family: "TWKEverett";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 78px;
+        line-height: 86px;
+        text-align: left;
+        margin: 50px 0 30px;
+        @include breakpoint($break-sm) {
+          font-size: 34px;
+          margin: 0 0 26px;
+        }
+        @include breakpoint($break-md) {
+          font-size: 48px;
+          line-height: 74px;
+          margin: 30px 0;
+        }
+      }
+
+      p {
+        font-size: 26px;
+        line-height: 30px;
+        text-align: left;
+        margin: 0 0 30px;
+      }
     }
   }
 
