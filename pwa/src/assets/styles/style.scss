@@ -29,6 +29,10 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  @include breakpoint($break-ssm) {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .row {
@@ -116,7 +120,7 @@ form {
     justify-content: center;
     align-content: center;
     align-items: center;
-    margin: 30px auto;
+    margin: 10px auto 20px;
   
     .checkbox-input {
       width: 20px;
@@ -189,8 +193,122 @@ form {
     align-items: center;
     justify-content: space-between;
   }
+  .button-container-center {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+  }
+  .button-container-end {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-end;
+  }
 }
 
+.balance-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-start;
+
+  .account-balance {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+    line-height: 20px;
+    text-align: left;
+    margin: 0 14px;
+
+    .account-icon {
+      display: flex;
+      flex-direction: row;
+      align-content: center;
+      justify-content: center;
+      align-items: center;
+      img,
+      svg {
+        background: transparent;
+        object-fit: contain;
+        overflow: hidden;
+        margin-right: 4px;
+        margin-bottom: -2px;
+      }
+    }
+    .account-icon.circle {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      flex-direction: row;
+      align-content: center;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background: $white;
+      margin-right: 8px;
+      margin-bottom: 0;
+      img,
+      svg {
+        display: block;
+        height: 22px;
+        object-fit: cover;
+        overflow: hidden;
+        margin: 0 auto;
+        padding: 0;
+      }
+    }
+
+    span.account-label {
+      width: 96px;
+      padding: 2px 4px 4px;
+      border-radius: 5px;
+      color: $black;
+      background: $safe-stone;
+      margin-right: 8px;
+      text-align: center;
+    }
+
+    .account-separator {
+      display: inline-flex;
+      width: 1px;
+      height: 18px;
+      margin: 0 8px;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+    .account-total {
+      font-size: 18px;
+      line-height: 20px;
+      text-align: left;
+      margin: 0;
+      width: auto;
+      display: flex;
+      flex-direction: row;
+      align-content: center;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+      
+}
+
+.button-container-start {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+}
 .button-container {
   width: 100%;
   display: flex;
@@ -198,6 +316,14 @@ form {
   align-content: center;
   align-items: center;
   justify-content: center;
+}
+.button-container-end {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .blue-button {
@@ -209,6 +335,28 @@ form {
   height: 55px;
   border: 1px solid $ape-blue;
   border-radius: 30px;
+  margin: 0;
+  transition: border-color 0.6s;
+  cursor: pointer;
+  
+  &:hover {
+    color: $safe-stone;
+    border-color: $safe-graphite;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
+.blue-button-sml {
+  color: $white;
+  background-color: $ape-blue;
+  font-size: 18px;
+  font-weight: bold;
+  width: 100px;
+  height: 35px;
+  border: 1px solid $ape-blue;
+  border-radius: 12px;
   margin: 0;
   transition: border-color 0.6s;
   cursor: pointer;
@@ -244,6 +392,28 @@ form {
     outline: none;
   }
 }
+.green-button-sml {
+  color: $black;
+  background-color: $safe-green;
+  font-size: 18px;
+  font-weight: bold;
+  width: 100px;
+  height: 35px;
+  border: 2px solid $safe-green;
+  border-radius: 12px;
+  margin: 0;
+  transition: border-color 0.6s;
+  cursor: pointer;
+  
+  &:hover {
+    color: $black;
+    border-color: $white;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
 
 .grey-button {
   color: $safe-graphite;
@@ -255,6 +425,28 @@ form {
   border: 1px solid $safe-stone;
   border-radius: 30px;
   margin: 0 5px;
+  transition: border-color 0.6s;
+  cursor: pointer;
+  
+  &:hover {
+    color: $black;
+    border-color: $black;
+  }
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
+.grey-button-sml {
+  color: $safe-graphite;
+  background-color: $safe-stone;
+  font-size: 18px;
+  font-weight: 900;
+  width: 100px;
+  height: 35px;
+  border: 1px solid $safe-stone;
+  border-radius: 12px;
+  margin: 0;
   transition: border-color 0.6s;
   cursor: pointer;
   

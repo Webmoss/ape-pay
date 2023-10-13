@@ -41,9 +41,8 @@
           placeholder="Fourth address"
         />
       </div>
-      <div class="button-container margin-top">
-        <button class="grey-button" @click="cancel">Clear</button>
-        <button class="blue-button" @click="swtichTab('payment')">Next</button>
+      <div class="button-container-end margin-top">
+        <button class="blue-button-sml" @click="swtichTab('payment')">Next</button>
       </div>
     </form>
     <form v-if="tab === 'payment'">
@@ -77,35 +76,46 @@
           placeholder="Add a message to your transaction"
         />
       </div>
+      <div class="balance-container">
+        <span class="account-balance">
+          <div class="account-total">
+            <span class="account-icon">
+              <img src="@/assets/images/Apecoin-Icon.png" height="24" />
+            </span>
+            {{
+              apecoinBalance ? parseFloat(apecoinBalance).toFixed(4) : parseFloat("0").toFixed(4)
+            }}
+          </div>
+        </span>
+        <span class="account-balance">
+          <div class="account-total">
+            <span class="account-icon circle">
+              <img src="@/assets/images/eth-diamond-black.png" height="24" />
+            </span>
+            {{ balance ? parseFloat(balance).toFixed(4) : parseFloat("0").toFixed(4) }}
+          </div>
+        </span>
+      </div>
       <div class="checkbox-row">
-        <input
-          v-model="form.fees"
-          name="fees"
-          type="checkbox"
-          class="checkbox-input"
-        />
+        <input v-model="form.fees" name="fees" type="checkbox" class="checkbox-input" />
         <label for="fees" class="checkbox-label">Pay fees with ApeCoin</label>
       </div>
-      <div class="button-container">
-        <button class="grey-button" @click="swtichTab('multi-sig')">
-          Back
-        </button>
-        <button v-if="connected" class="green-button" @click="makePayment">
-          Pay Now
-        </button>
+      <div class="button-container-end">
+        <button v-if="connected" class="green-button-sml" @click="makePayment">Pay Now</button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from "vue";
+  // import { ethers } from "ethers";
   import { storeToRefs } from "pinia";
+  import { ref } from "vue";
+
   import { useStore } from "@/store";
-  import { ethers } from "ethers";
 
   const store = useStore();
-  const { connected } = storeToRefs(store);
+  const { connected, balance, apecoinBalance } = storeToRefs(store);
 
   const multiSigs = ref({
     addressOne: "",
@@ -127,21 +137,21 @@
     tab.value = type;
   };
 
-  const cancel = async () => {
-    console.log("cancel");
-    multiSigs.value = {
-      addressOne: "",
-      addressTwo: "",
-      addressThree: "",
-      addressFour: "",
-    };
-    form.value = {
-      address: "",
-      amount: "",
-      message: "",
-      fees: true,
-    };
-  };
+  // const cancel = async () => {
+  //   console.log("cancel");
+  //   multiSigs.value = {
+  //     addressOne: "",
+  //     addressTwo: "",
+  //     addressThree: "",
+  //     addressFour: "",
+  //   };
+  //   form.value = {
+  //     address: "",
+  //     amount: "",
+  //     message: "",
+  //     fees: true,
+  //   };
+  // };
 
   const makePayment = async () => {
     // console.log("makePayment");
@@ -153,11 +163,9 @@
     //   const provider = new ethers.providers.Web3Provider(ethereum);
     //   const signer = provider.getSigner();
     //   const destination = form.value.address;
-
     //   /* Convert 1 ether to wei */
     //   // const amount = ethers.utils.parseEther("0.001");
     //   const amount = ethers.utils.parseEther(form.value.amount);
-
     //   /* Submit transaction to the blockchain */
     //   const tx = await signer.sendTransaction({
     //     to: destination,
@@ -165,10 +173,8 @@
     //     maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
     //     maxFeePerGas: "6000000000000", // Max fee per gas
     //   });
-
     //   /* Wait for transaction to be mined */
     //   const receipt = await tx.wait();
-
     //   return receipt;
     // } catch (error) {
     //   return error as string;
@@ -182,7 +188,7 @@
 
   .card {
     width: 405px;
-    height: 470px;
+    height: 440px;
     display: flex;
     flex-direction: column;
     align-content: center;
@@ -195,6 +201,6 @@
     background: $black;
   }
   .margin-top {
-    margin-top: 20px;
+    margin-top: 10px;
   }
 </style>

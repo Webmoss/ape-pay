@@ -9,9 +9,7 @@ module.exports = {
     "@vue/typescript/recommended",
     "plugin:prettier/recommended",
   ],
-  plugins: [
-    "simple-import-sort"
-  ],
+  plugins: ["simple-import-sort"],
   parserOptions: {
     ecmaVersion: 2020,
   },
@@ -24,10 +22,10 @@ module.exports = {
     "prettier/prettier": [
       2,
       {
-        "singleQuote": false,
-        "printWidth": 100,
-        "semi": true
-      }
-    ]
+        singleQuote: false,
+        printWidth: 100,
+        semi: true,
+      },
+    ],
   },
 };

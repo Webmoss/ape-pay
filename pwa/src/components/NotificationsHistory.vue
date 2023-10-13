@@ -13,10 +13,7 @@
         <th>Date</th>
       </tr>
       <template v-if="notifications.length > 0">
-        <tr
-          v-for="notification in notifications"
-          :key="notification.notification_id"
-        >
+        <tr v-for="notification in notifications" :key="notification.notification_id">
           <td>{{ notification.notification_id }}</td>
           <td>{{ notification.wallet_address }}</td>
           <td>{{ notification.type }}</td>
@@ -39,6 +36,7 @@
 
 <script setup lang="ts">
   import { storeToRefs } from "pinia";
+
   import { useStore } from "@/store";
 
   const store = useStore();

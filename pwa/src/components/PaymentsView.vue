@@ -14,27 +14,15 @@
             4. Optimise your gas costs off-chain
           </p>
           <p>
-            <a
-              class="link"
-              href="https://apecoin.com/"
-              target="_blank"
-              alt="About ApeCoin"
+            <a class="link" href="https://apecoin.com/" target="_blank" alt="About ApeCoin"
               >ApeCoin Powered →
             </a>
             <br />
-            <a
-              class="link"
-              href="https://tableland.xyz/"
-              target="_blank"
-              alt="About Tableland"
+            <a class="link" href="https://tableland.xyz/" target="_blank" alt="About Tableland"
               >Tableland NFT Receipts →
             </a>
             <br />
-            <a
-              class="link"
-              href="https://xmtp.org/"
-              target="_blank"
-              alt="About XMTP Chat"
+            <a class="link" href="https://xmtp.org/" target="_blank" alt="About XMTP Chat"
               >XMTP Messaging →
             </a>
           </p>
@@ -73,10 +61,11 @@
 </template>
 <script setup lang="ts">
   import { ref } from "vue";
-  import MiniMenu from "./MiniMenu.vue";
-  import CryptoPayment from "./CryptoPayment.vue";
-  import MultiSig from "./MultiSig.vue";
+
   import CreditCard from "./CreditCard.vue";
+  import CryptoPayment from "./CryptoPayment.vue";
+  import MiniMenu from "./MiniMenu.vue";
+  import MultiSig from "./MultiSig.vue";
 
   const tab = ref("crypto");
 

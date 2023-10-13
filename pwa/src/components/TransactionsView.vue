@@ -35,9 +35,10 @@
 </template>
 <script setup lang="ts">
   import { ref } from "vue";
+
   import MiniMenu from "./MiniMenu.vue";
-  import Transactions from "./TransactionsHistory.vue";
   import Notifications from "./NotificationsHistory.vue";
+  import Transactions from "./TransactionsHistory.vue";
 
   const tab = ref("transactions");
 

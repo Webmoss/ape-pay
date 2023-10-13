@@ -8,21 +8,44 @@
         <div class="card">
           <h3>Safe {Wallet}</h3>
           <p v-if="!wallet">
-            Use Safe {{ "{WALLET}" }} to create, access and securely manage user
-            accounts and multi-sig crypto wallets
+            Use Safe {{ "{WALLET}" }} to create, access and securely manage user accounts and
+            multi-sig crypto wallets
           </p>
           <p v-else>
-            <span class="wallet-address"><span class="wallet-label">Safe {Wallet}</span>  {{ safes[0] }}</span>
-            <span class="wallet-address"><span class="wallet-label">ETH {Wallet}</span> {{ wallet }}</span>
+            <span class="wallet-address"
+              ><span class="wallet-label">Safe {Wallet}</span> {{ safes[0] }}</span
+            >
+            <span class="wallet-address"
+              ><span class="wallet-label">EOA {Wallet}</span> {{ wallet }}</span
+            >
+            <span class="account-balance">
+              <span class="account-label">{ApeCoin}</span>
+              <div class="account-total">
+                <span class="account-icon">
+                  <img src="@/assets/images/Apecoin-Icon.png" height="24" />
+                </span>
+                {{
+                  apecoinBalance
+                    ? parseFloat(apecoinBalance).toFixed(4)
+                    : parseFloat("0").toFixed(4)
+                }}
+              </div>
+            </span>
+            <span class="account-balance">
+              <span class="account-label">{Ethereum}</span>
+              <div class="account-total">
+                <span class="account-icon circle">
+                  <img src="@/assets/images/eth-diamond-black.png" height="20" />
+                </span>
+                {{ balance ? parseFloat(balance).toFixed(4) : parseFloat("0").toFixed(4) }}
+              </div>
+            </span>
           </p>
-          <div class="button-container">
-            <button v-if="!connected" class="green-button" @click="signIn">
-              Connect
-            </button>
-            <button v-if="!wallet" class="grey-button" @click="signUp">SignUp</button>
-            <button v-if="connected" class="grey-button" @click="signOut">
-              Logout
-            </button>
+          <div v-if="!connected" class="button-container">
+            <button class="green-button" @click="signIn">Connect</button>
+          </div>
+          <div v-if="connected" class="button-container-end">
+            <button class="grey-button-sml" @click="signOut">Logout</button>
           </div>
         </div>
       </div>
@@ -30,16 +53,12 @@
         <div class="description">
           <h1>ApeSafe</h1>
           <p>
-            ApePay offers you a Safe and secure online portal to accept ApeCoin
-            as the preferred payment option for your business
+            ApePay offers you a Safe and secure online portal to accept ApeCoin as the preferred
+            payment option for your business
           </p>
           <p></p>
           <p>
-            <a
-              class="link"
-              href="https://safe.global/"
-              target="_blank"
-              alt="About Safe Wallet"
+            <a class="link" href="https://safe.global/" target="_blank" alt="About Safe Wallet"
               >About Safe Wallet →
             </a>
           </p>
@@ -49,270 +68,140 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-import { storeToRefs } from "pinia";
-import { useStore } from "../store/index";
-import type { IProvider } from "@web3auth/base";
-import {
-  ADAPTER_EVENTS,
-  CHAIN_NAMESPACES,
-  WALLET_ADAPTERS,
-} from "@web3auth/base";
-import { Web3AuthOptions } from '@web3auth/modal';
-import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
-import { Web3AuthModalPack, Web3AuthConfig, Web3AuthEventListener } from '@safe-global/auth-kit';
-// import Safe, { EthersAdapter, SafeFactory } from "@safe-global/protocol-kit";
+  import { Web3AuthConfig, Web3AuthEventListener, Web3AuthModalPack } from "@safe-global/auth-kit";
+  import { ADAPTER_EVENTS, CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
+  import { Web3AuthOptions } from "@web3auth/modal";
+  import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+  import { ethers } from "ethers";
+  import { storeToRefs } from "pinia";
 
-// import SafeApiKit, {
-//   SafeServiceInfoResponse,
-//   OwnerResponse,
-// } from "@safe-global/api-kit";
+  /* Import contract ABIs */
+  import apecoinAbi from "@/abi/ethereum-ape-token-abi.json";
+  import apecoinGoerliAbi from "@/abi/goerli-ape-token-abi.json";
+  import { useStore } from "@/store";
 
-import MiniMenu from "./MiniMenu.vue";
+  import MiniMenu from "./MiniMenu.vue";
 
-const store = useStore();
-const { connected, wallet, safes, user } = storeToRefs(store);
+  /* Ape Token Contract Addresses */
+  const apecoinAddress = "0x4d224452801ACEd8B2F0aebE155379bb5D594381";
+  const apecoinGoerliAddress = "0x328507DC29C95c170B56a1b3A758eB7a9E73455c";
+  const apecoinContract =
+    process.env.NODE_ENV === "development" ? apecoinGoerliAddress : apecoinAddress;
+  const apecoinABI = process.env.NODE_ENV === "development" ? apecoinGoerliAbi.abi : apecoinAbi.abi;
 
-const provider = ref<IProvider | any>(false);
-const storeWeb3AuthModalPack = ref();
-// const safeAuthSignInResponse = ref();
+  const store = useStore();
+  const { connected, balance, apecoinBalance, wallet, safes, user } = storeToRefs(store);
 
-const clientId = "BBfk8wSH3Kn6HREZ2PQ41USY9PzLvR56q0PJ9fxDxD8TuiFjfWIw-rrbjGynxx4GkRc2vg8lm2UPvSk-WnDunI4"
-console.log("clientId",clientId);
+  const clientId =
+    "BBfk8wSH3Kn6HREZ2PQ41USY9PzLvR56q0PJ9fxDxD8TuiFjfWIw-rrbjGynxx4GkRc2vg8lm2UPvSk-WnDunI4";
 
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
+  // const options: Web3AuthOptions = {
+  //   clientId: clientId,
+  //   web3AuthNetwork: "testnet",
+  //   chainConfig: {
+  //     chainNamespace: CHAIN_NAMESPACES.EIP155,
+  //     chainId: "0x5",
+  //     rpcTarget: "https://rpc.ankr.com/eth_goerli",
+  //   },
+  //   uiConfig: {
+  //     appName: "ApePay",
+  //     // theme: "dark",
+  //     loginMethodsOrder: ["google", "facebook"],
+  //   },
+  // };
 
-const styles = ["color: black", "background: #12ff80"].join(";");
-console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV );
+  const styles = ["color: black", "background: #12ff80"].join(";");
+  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
 
-/* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-// const options: Web3AuthOptions = {
-//   clientId: clientId,
-//   web3AuthNetwork: 'testnet',
-//   chainConfig: {
-//     chainNamespace: CHAIN_NAMESPACES.EIP155,
-//     chainId: '0x5',
-//     rpcTarget: 'https://rpc.ankr.com/eth_goerli'
-//   },
-//   uiConfig: {
-//     appName: "ApePay",
-//     theme: 'dark',
-//     loginMethodsOrder: ['google', 'facebook']
-//   }
-// }
-
-/* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-const options: Web3AuthOptions = {
-  clientId: clientId,
-  web3AuthNetwork: 'mainnet',
-  chainConfig: {
-    chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: '0x1',
-    rpcTarget: 'https://rpc.ankr.com/eth_goerli'
-  },
-  uiConfig: {
-    appName: "ApePay",
-    theme: 'dark',
-    loginMethodsOrder: ['google', 'facebook']
-  }
-}
-
-
-/* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters */
-const modalConfig = {
-  [WALLET_ADAPTERS.TORUS_EVM]: {
-    label: 'torus',
-    showOnModal: false
-  },
-  [WALLET_ADAPTERS.METAMASK]: {
-    label: 'metamask',
-    showOnDesktop: true,
-    showOnMobile: false
-  }
-}
-
-/* https://web3auth.io/docs/sdk/pnp/web/modal/whitelabel#whitelabeling-while-modal-initialization */
-const openloginAdapter = new OpenloginAdapter({
-  loginSettings: {
-    mfaLevel: 'mandatory'
-  },
-  adapterSettings: {
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
+  const options: Web3AuthOptions = {
     clientId: clientId,
-    uxMode: 'popup',
-    whiteLabel: {
-      name: 'ApePay'
-    }
-  },
-})
+    web3AuthNetwork: "mainnet",
+    chainConfig: {
+      chainNamespace: CHAIN_NAMESPACES.EIP155,
+      chainId: "0x1",
+      rpcTarget: "https://rpc.ankr.com/eth_goerli",
+    },
+    uiConfig: {
+      appName: "ApePay",
+      theme: "dark",
+      loginMethodsOrder: ["google", "facebook"],
+    },
+  };
 
-const web3AuthConfig: Web3AuthConfig = {
-  txServiceUrl: 'https://safe-transaction-goerli.safe.global'
-}
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters */
+  const modalConfig = {
+    [WALLET_ADAPTERS.TORUS_EVM]: {
+      label: "torus",
+      showOnModal: false,
+    },
+    [WALLET_ADAPTERS.METAMASK]: {
+      label: "metamask",
+      showOnDesktop: true,
+      showOnMobile: false,
+    },
+  };
 
-const connectedHandler: Web3AuthEventListener = (data) => console.log("CONNECTED", data);
-const disconnectedHandler: Web3AuthEventListener = (data) => console.log("DISCONNECTED", data);
-const erroredHandler: Web3AuthEventListener = (data) => console.log("ERRORED", data);
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/whitelabel#whitelabeling-while-modal-initialization */
+  const openloginAdapter = new OpenloginAdapter({
+    loginSettings: {
+      mfaLevel: "mandatory",
+    },
+    adapterSettings: {
+      clientId: clientId,
+      uxMode: "popup",
+      whiteLabel: {
+        appName: "ApePay",
+      },
+    },
+  });
 
-const signIn = async () => {
-  store.setLoading(true);
-  try {
-    /* Instantiate and initialize the pack */
-    const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-    await web3AuthModalPack.init({
-      options,
-      adapters: [openloginAdapter],
-      modalConfig,
-    });
+  const web3AuthConfig: Web3AuthConfig = {
+    txServiceUrl: "https://safe-transaction-goerli.safe.global",
+  };
 
-    storeWeb3AuthModalPack.value = web3AuthModalPack;
+  const connectedHandler: Web3AuthEventListener = (data) => console.log("CONNECTED", data);
+  const disconnectedHandler: Web3AuthEventListener = (data) => console.log("DISCONNECTED", data);
+  const erroredHandler: Web3AuthEventListener = (data) => console.log("ERRORED", data);
 
-    web3AuthModalPack.subscribe(
-      ADAPTER_EVENTS.CONNECTED,
-      connectedHandler
-    );
-    web3AuthModalPack.subscribe(
-      ADAPTER_EVENTS.DISCONNECTED,
-      disconnectedHandler
-    );
-    web3AuthModalPack.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
-
-    const signInInfo = await web3AuthModalPack.signIn();
-    console.log("SIGN IN RESPONSE: ", signInInfo);
-    
-    // AuthKitSignInData {
-    //   eoa: string // The safe signer
-    //   safes?: string[] // The list of associated Safe addresses
-    // }
-
-    if (signInInfo) {
-      store.setWallet(signInInfo.eoa);
-      store.setSafes(signInInfo.safes);
-      store.setConnected(true);
-    }
-
-    const userInfo = await web3AuthModalPack.getUserInfo();
-    console.log("USER INFO: ", userInfo);
-
-    if (userInfo) {
-      store.setUser(userInfo);
-      console.log("User Info: ", user.value);
-    }
-  } catch (error) {
-    console.log("Error", error);
-  } finally {
-    store.setLoading(false);
-  }
-};
-
-const signUp = async () => {
-  // store.setLoading(true);
-  // try {
-  //   const newWallet = await createSafeWallet();
-  //   console.log("Safe Wallet Created", newWallet);
-  //   if (newWallet) {
-  //     store.setWallet(newWallet);
-  //     console.log("Wallet :", wallet.value);
-  //     store.setConnected(true);
-  //   }
-  // } catch (error) {
-  //   console.log("Error", error);
-  // } finally {
-  //   store.setLoading(false);
-  // }
-};
-
-const signOut = async () => {
-  console.log("signOut")
-  try {
-    /* Instantiate and initialize the pack */
-    const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-    await web3AuthModalPack.init({
-      options,
-      adapters: [openloginAdapter],
-      modalConfig,
-    });
-    await web3AuthModalPack.signOut();
-    store.setWallet(null);
-    store.setUser(null);
-    store.setConnected(false);
-  } catch (error) {
-    console.log("Error", error);
-  } finally {
-    store.setLoading(false);
-  }
-};
-
-// const signTxn = async () => {
-//   store.setLoading(true);
-//   try {
-//     const provider = new ethers.providers.Web3Provider(
-//       web3AuthModalPack.value.getProvider()
-//     );
-//     const signer = provider.getSigner();
-
-//     const ethAdapter = new EthersAdapter({
-//       ethers,
-//       signerOrProvider: signer || provider,
-//     });
-
-//     const safeSDK = await Safe.create({
-//       ethAdapter,
-//       safeAddress,
-//     });
-//     // Create a Safe transaction with the provided parameters
-//     const safeTransactionData: MetaTransactionData = {
-//       to: "0x",
-//       data: "0x",
-//       value: ethers.utils.parseUnits("0.0001", "ether").toString(),
-//     };
-
-//     const safeTransaction = await safeSDK.createTransaction({
-//       safeTransactionData,
-//     });
-//   } catch (error) {
-//     console.log("Error", error);
-//   } finally {
-//     store.setLoading(false);
-//   }
-// };
-
-
-  const checkSafeWalletConnected = async () => {
+  const signIn = async () => {
+    store.setLoading(true);
     try {
-      // const { ethereum } = window;
-      // if (!ethereum) {
-      //   throw Error();
+      /* Instantiate and initialize the pack */
+      const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
+      await web3AuthModalPack.init({
+        options,
+        adapters: [openloginAdapter],
+        modalConfig,
+      });
+
+      /* Subscribe to Safe web3AuthModalPack events */
+      web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, connectedHandler);
+      web3AuthModalPack.subscribe(ADAPTER_EVENTS.DISCONNECTED, disconnectedHandler);
+      web3AuthModalPack.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
+
+      const signInInfo = await web3AuthModalPack.signIn();
+      console.log("SIGN IN RESPONSE: ", signInInfo);
+
+      // AuthKitSignInData {
+      //   eoa: string // The safe signer
+      //   safes?: string[] // The list of associated Safe addresses
       // }
-      // const provider = new ethers.providers.Web3Provider(ethereum);
-      // const safeOwner = provider.getSigner(0);
-      // console.log("Safe Owner", safeOwner);
 
-      
-      // Instantiate an EthAdapter
-      // const ethAdapter = new EthersAdapter({
-      //   ethers,
-      //   signerOrProvider: safeOwner,
-      // });
+      if (signInInfo) {
+        store.setWallet(signInInfo.eoa);
+        store.setSafes(signInInfo.safes);
+        await checkApecoinBalance(signInInfo.eoa);
+        await checkETHBalance(signInInfo.eoa);
+        store.setConnected(true);
+      }
 
-      // Initialize the Safe API Kit
-      // const txServiceUrl = "https://safe-transaction-goerli.safe.global";
-      // const safeService = new SafeApiKit({ txServiceUrl, ethAdapter });
-      // const serviceInfo: SafeServiceInfoResponse =
-      //   await safeService.getServiceInfo();
-      // console.log("serviceInfo", serviceInfo);
-
-      // const ownerAddress = (await safeOwner.getAddress()).toString();
-      // const safes: OwnerResponse = await safeService.getSafesByOwner(
-      //   ownerAddress
-      // );
-      // console.log("safes", safes);
-
-      // Initialize the Protocol Kit
-      // const safeFactory = await SafeFactory.create({ ethAdapter });
-      // const safeSdk = await Safe.create({ ethAdapter, ownerAddress });
-
-      // if (safeOwner) {
-      //   store.setConnected(true);
-      // }
+      const userInfo = await web3AuthModalPack.getUserInfo();
+      if (userInfo) {
+        store.setUser(userInfo);
+        console.log("User Info: ", user.value);
+      }
     } catch (error) {
       console.log("Error", error);
     } finally {
@@ -320,25 +209,71 @@ const signOut = async () => {
     }
   };
 
-  onMounted(async () => {
-    // await checkSafeWalletConnected();    
-  });
+  const signOut = async () => {
+    try {
+      const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
+      await web3AuthModalPack.init({
+        options,
+        adapters: [openloginAdapter],
+        modalConfig,
+      });
+      await web3AuthModalPack.signOut();
+      store.setWallet(null);
+      store.setSafes(null);
+      store.setUser(null);
+      store.setConnected(false);
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
 
-  onUnmounted(async () => {
-    // storeWeb3AuthModalPack.value.unsubscribe(
-    //   ADAPTER_EVENTS.CONNECTED,
-    //   connectedHandler
-    // );
-    // storeWeb3AuthModalPack.value.unsubscribe(
-    //   ADAPTER_EVENTS.DISCONNECTED,
-    //   disconnectedHandler
-    // );
-    // storeWeb3AuthModalPack.value.unsubscribe(
-    //   ADAPTER_EVENTS.DISCONNECTED,
-    //   disconnectedHandler
-    // );    
-  });
+  const checkETHBalance = async (account: string) => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        console.log(`Please connect 🦊 Metamask to continue!`);
+        return;
+      }
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const wei = await provider.getBalance(account);
+      const ethBalance = ethers.utils.formatEther(wei);
+      const store = useStore();
+      store.setBalance(ethBalance);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const checkApecoinBalance = async (account: string) => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        console.log(`Please connect 🦊 Metamask to continue!`);
+        return;
+      }
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const contract = new ethers.Contract(apecoinContract, apecoinABI, provider);
+
+      /* Get the ERC-20 contract token name */
+      const contractName = await contract.name();
+      console.log("The token's contract name is " + contractName);
+
+      /* Get the ERC-20 token symbol */
+      const tokenSymbol = await contract.symbol();
+      console.log("The token's symbol is " + tokenSymbol);
+
+      /* Get token balance as BigNumber */
+      const balance = await contract.balanceOf(account);
+
+      /* Format the balance for displaying 18 decimal places */
+      const apecoinBalance = ethers.utils.formatUnits(balance, 18);
+
+      const store = useStore();
+      store.setApecoinBalance(apecoinBalance);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 </script>
 <style lang="scss" scoped>
   @import "@/assets/styles/variables.scss";
@@ -374,6 +309,7 @@ const signOut = async () => {
     padding: 0;
     @include breakpoint($break-sm) {
       width: 100%;
+      flex-direction: column;
     }
   }
 
@@ -440,7 +376,7 @@ const signOut = async () => {
       }
 
       p {
-        height: 90px;
+        min-height: 90px;
         font-size: 26px;
         line-height: 30px;
         text-align: center;
@@ -455,13 +391,94 @@ const signOut = async () => {
           font-size: 15px;
           line-height: 20px;
           text-align: left;
-          margin:10px 0 0;
+          margin: 10px 0 0;
           span.wallet-label {
+            width: 96px;
             padding: 2px 4px 4px;
             border-radius: 5px;
             color: $black;
             background: $safe-stone;
             margin-right: 8px;
+            text-align: center;
+          }
+        }
+        .account-balance {
+          display: flex;
+          flex-direction: row;
+          align-content: center;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 15px;
+          line-height: 20px;
+          text-align: left;
+          margin: 10px 0 0;
+
+          .account-icon {
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            img,
+            svg {
+              background: transparent;
+              object-fit: contain;
+              overflow: hidden;
+              margin-right: 4px;
+              margin-bottom: -2px;
+            }
+          }
+          .account-icon.circle {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background: $white;
+            margin-right: 8px;
+            margin-bottom: 0;
+            img,
+            svg {
+              display: block;
+              height: 18px;
+              object-fit: cover;
+              overflow: hidden;
+              margin: 0 auto;
+              padding: 0;
+            }
+          }
+
+          span.account-label {
+            width: 96px;
+            padding: 2px 4px 4px;
+            border-radius: 5px;
+            color: $black;
+            background: $safe-stone;
+            margin-right: 8px;
+            text-align: center;
+          }
+
+          .account-separator {
+            display: inline-flex;
+            width: 1px;
+            height: 18px;
+            margin: 0 8px;
+            background-color: rgba(255, 255, 255, 0.5);
+          }
+          .account-total {
+            font-size: 18px;
+            line-height: 20px;
+            text-align: left;
+            margin: 10px 0 0;
+            width: auto;
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
           }
         }
       }

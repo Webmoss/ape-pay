@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
-import { userObject } from "@/models/user";
-import { transactionObject } from "@/models/transaction";
+
 import { notificationObject } from "@/models/notification";
+import { transactionObject } from "@/models/transaction";
+import { userObject } from "@/models/user";
 
 export const useStore = defineStore({
   id: "store",
@@ -12,7 +13,8 @@ export const useStore = defineStore({
     safes: [] as string[],
     user: <userObject>{},
     account: "",
-    balance: 0,
+    balance: "",
+    apecoinBalance: "",
     transaction: <transactionObject>{},
     transactions: [] as transactionObject[],
     notification: <notificationObject>{},
@@ -39,6 +41,9 @@ export const useStore = defineStore({
     },
     getBalance(state) {
       return state.balance;
+    },
+    getApecoinBalance(state) {
+      return state.apecoinBalance;
     },
     getTransaction(state) {
       return state.transaction;
@@ -72,8 +77,11 @@ export const useStore = defineStore({
     setAccount(account: string) {
       this.account = account;
     },
-    setBalance(balance: number) {
+    setBalance(balance: string) {
       this.balance = balance;
+    },
+    setApecoinBalance(balance: string) {
+      this.apecoinBalance = balance;
     },
     setTransaction(transaction: transactionObject) {
       this.transaction = transaction;

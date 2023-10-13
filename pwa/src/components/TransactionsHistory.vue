@@ -13,10 +13,7 @@
         <th>Date</th>
       </tr>
       <template v-if="transactions.length > 0">
-        <tr
-          v-for="transaction in transactions"
-          :key="transaction.transaction_id"
-        >
+        <tr v-for="transaction in transactions" :key="transaction.transaction_id">
           <td>{{ transaction.transaction_id }}</td>
           <td>{{ transaction.wallet_address }}</td>
           <td>{{ transaction.type }}</td>
@@ -39,6 +36,7 @@
 
 <script setup lang="ts">
   import { storeToRefs } from "pinia";
+
   import { useStore } from "@/store";
 
   const store = useStore();

@@ -1,10 +1,8 @@
-import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
+import { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+
 import { useStore } from "@/store";
 
-export const authGuard = async (
-  to: RouteLocationNormalized,
-  next: NavigationGuardNext,
-) => {
+export const authGuard = async (to: RouteLocationNormalized, next: NavigationGuardNext) => {
   const store = useStore();
   try {
     /* The route is for a guest, see guest option on routes.ts */

@@ -5,11 +5,7 @@
         <div class="footer-card">
           <div class="footer-left">
             <p>
-              <img
-                src="../assets/images/ApeCoinPowered.png"
-                alt="ApeCoin Powered"
-                height="80"
-              />
+              <img src="../assets/images/ApeCoinPowered.png" alt="ApeCoin Powered" height="80" />
             </p>
           </div>
         </div>
@@ -17,12 +13,7 @@
           <div class="footer-right">
             <ul class="social-links">
               <li>
-                <a
-                  href="https://twitter.com/webmoss"
-                  alt="Twitter"
-                  target="_blank"
-                  >Twitter →</a
-                >
+                <a href="https://twitter.com/webmoss" alt="Twitter" target="_blank">Twitter →</a>
               </li>
               <li>
                 <a
@@ -33,10 +24,7 @@
                 >
               </li>
               <li>
-                <a
-                  href="https://github.com/Webmoss/ape-pay"
-                  alt="Github"
-                  target="_blank"
+                <a href="https://github.com/Webmoss/ape-pay" alt="Github" target="_blank"
                   >Github →</a
                 >
               </li>
@@ -62,9 +50,7 @@
               class="arrow-up"
             >
               <path d="M0 0h24v24H0V0z" fill="none" />
-              <path
-                d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"
-              />
+              <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
             </svg>
           </button>
         </div>

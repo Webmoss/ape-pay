@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { authGuard } from "./guards";
 import { nextTick } from "vue";
+import { createRouter, createWebHistory } from "vue-router";
 
+import { authGuard } from "./guards";
 import routes from "./routes";
 
 const baseURL = "";
@@ -21,9 +21,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to) => {
   nextTick(() => {
-    document.title = to.meta.title
-      ? `${to.meta.title} - ${baseTitle}`
-      : baseTitle;
+    document.title = to.meta.title ? `${to.meta.title} - ${baseTitle}` : baseTitle;
   });
 });
 

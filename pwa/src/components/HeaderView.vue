@@ -12,12 +12,8 @@
       <ul class="menu-black menu">
         <li class="link-black" @click="navigateAndScroll('home')">Home</li>
         <li class="link-black" @click="navigateAndScroll('about')">About</li>
-        <li class="link-black" @click="navigateAndScroll('payments')">
-          Payments
-        </li>
-        <li class="link-black" @click="navigateAndScroll('transactions')">
-          Transactions
-        </li>
+        <li class="link-black" @click="navigateAndScroll('payments')">Payments</li>
+        <li class="link-black" @click="navigateAndScroll('transactions')">Transactions</li>
         <li class="link-black" @click="navigateAndScroll('faqs')">Faqs</li>
       </ul>
     </nav>
