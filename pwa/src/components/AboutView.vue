@@ -7,7 +7,7 @@
       <div class="left-side">
         <div class="card">
           <h3>Safe {Wallet}</h3>
-          <p v-if="!wallet">
+          <p v-if="!connected">
             Use Safe {{ "{WALLET}" }} to create, access and securely manage user accounts and
             multi-sig crypto wallets
           </p>
@@ -44,7 +44,7 @@
           <div v-if="!connected" class="button-container">
             <button class="green-button" @click="signIn">Connect</button>
           </div>
-          <div v-if="connected" class="button-container-end">
+          <div v-if="connected" class="button-container">
             <button class="grey-button-sml" @click="signOut">Logout</button>
           </div>
         </div>
@@ -68,14 +68,16 @@
   </div>
 </template>
 <script setup lang="ts">
+  import SafeApiKit, { OwnerResponse } from "@safe-global/api-kit";
   import { Web3AuthConfig, Web3AuthEventListener, Web3AuthModalPack } from "@safe-global/auth-kit";
+  import { EthersAdapter } from "@safe-global/protocol-kit";
   import { ADAPTER_EVENTS, CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
   import { Web3AuthOptions } from "@web3auth/modal";
   import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
   import { ethers } from "ethers";
   import { storeToRefs } from "pinia";
+  import { onMounted } from "vue";
 
-  /* Import contract ABIs */
   import apecoinAbi from "@/abi/ethereum-ape-token-abi.json";
   import apecoinGoerliAbi from "@/abi/goerli-ape-token-abi.json";
   import { useStore } from "@/store";
@@ -86,41 +88,32 @@
   const apecoinAddress = "0x4d224452801ACEd8B2F0aebE155379bb5D594381";
   const apecoinGoerliAddress = "0x328507DC29C95c170B56a1b3A758eB7a9E73455c";
   const apecoinContract =
-    process.env.NODE_ENV === "development" ? apecoinGoerliAddress : apecoinAddress;
+    process.env.NODE_ENV && process.env.NODE_ENV === "development"
+      ? apecoinGoerliAddress
+      : apecoinAddress;
   const apecoinABI = process.env.NODE_ENV === "development" ? apecoinGoerliAbi.abi : apecoinAbi.abi;
-
-  const store = useStore();
-  const { connected, balance, apecoinBalance, wallet, safes, user } = storeToRefs(store);
 
   const clientId =
     "BBfk8wSH3Kn6HREZ2PQ41USY9PzLvR56q0PJ9fxDxD8TuiFjfWIw-rrbjGynxx4GkRc2vg8lm2UPvSk-WnDunI4";
+  const txServiceUrl =
+    process.env.NODE_ENV && process.env.NODE_ENV === "development"
+      ? "https://safe-transaction-goerli.safe.global"
+      : "https://safe-transaction-mainnet.safe.global";
 
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-  // const options: Web3AuthOptions = {
-  //   clientId: clientId,
-  //   web3AuthNetwork: "testnet",
-  //   chainConfig: {
-  //     chainNamespace: CHAIN_NAMESPACES.EIP155,
-  //     chainId: "0x5",
-  //     rpcTarget: "https://rpc.ankr.com/eth_goerli",
-  //   },
-  //   uiConfig: {
-  //     appName: "ApePay",
-  //     // theme: "dark",
-  //     loginMethodsOrder: ["google", "facebook"],
-  //   },
-  // };
+  const store = useStore();
+  const { connected, balance, apecoinBalance, wallet, safes } = storeToRefs(store);
 
-  const styles = ["color: black", "background: #12ff80"].join(";");
-  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
+  const web3AuthConfig: Web3AuthConfig = {
+    txServiceUrl: txServiceUrl,
+  };
 
   /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
   const options: Web3AuthOptions = {
     clientId: clientId,
-    web3AuthNetwork: "mainnet",
+    web3AuthNetwork: "testnet",
     chainConfig: {
       chainNamespace: CHAIN_NAMESPACES.EIP155,
-      chainId: "0x1",
+      chainId: "0x5",
       rpcTarget: "https://rpc.ankr.com/eth_goerli",
     },
     uiConfig: {
@@ -129,6 +122,25 @@
       loginMethodsOrder: ["google", "facebook"],
     },
   };
+
+  const styles = ["color: black", "background: #12ff80"].join(";");
+  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
+
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
+  // const options: Web3AuthOptions = {
+  //   clientId: clientId,
+  //   web3AuthNetwork: "mainnet",
+  //   chainConfig: {
+  //     chainNamespace: CHAIN_NAMESPACES.EIP155,
+  //     chainId: "0x1",
+  //     rpcTarget: "https://rpc.ankr.com/eth",
+  //   },
+  //   uiConfig: {
+  //     appName: "ApePay",
+  //     theme: "dark",
+  //     loginMethodsOrder: ["google", "facebook"],
+  //   },
+  // };
 
   /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters */
   const modalConfig = {
@@ -157,10 +169,6 @@
     },
   });
 
-  const web3AuthConfig: Web3AuthConfig = {
-    txServiceUrl: "https://safe-transaction-goerli.safe.global",
-  };
-
   const connectedHandler: Web3AuthEventListener = (data) => console.log("CONNECTED", data);
   const disconnectedHandler: Web3AuthEventListener = (data) => console.log("DISCONNECTED", data);
   const erroredHandler: Web3AuthEventListener = (data) => console.log("ERRORED", data);
@@ -182,7 +190,6 @@
       web3AuthModalPack.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
 
       const signInInfo = await web3AuthModalPack.signIn();
-      console.log("SIGN IN RESPONSE: ", signInInfo);
 
       // AuthKitSignInData {
       //   eoa: string // The safe signer
@@ -200,7 +207,6 @@
       const userInfo = await web3AuthModalPack.getUserInfo();
       if (userInfo) {
         store.setUser(userInfo);
-        console.log("User Info: ", user.value);
       }
     } catch (error) {
       console.log("Error", error);
@@ -231,16 +237,16 @@
     try {
       const { ethereum } = window;
       if (!ethereum) {
-        console.log(`Please connect 🦊 Metamask to continue!`);
+        console.log(`Please connect web3 wallet to continue!`);
         return;
       }
+      const store = useStore();
       const provider = new ethers.providers.Web3Provider(ethereum);
       const wei = await provider.getBalance(account);
       const ethBalance = ethers.utils.formatEther(wei);
-      const store = useStore();
       store.setBalance(ethBalance);
     } catch (error) {
-      console.log(error);
+      console.log("Error", error);
     }
   };
 
@@ -248,32 +254,54 @@
     try {
       const { ethereum } = window;
       if (!ethereum) {
-        console.log(`Please connect 🦊 Metamask to continue!`);
+        console.log(`Please connect web3 wallet to continue!`);
         return;
       }
+      const store = useStore();
       const provider = new ethers.providers.Web3Provider(ethereum);
       const contract = new ethers.Contract(apecoinContract, apecoinABI, provider);
-
-      /* Get the ERC-20 contract token name */
-      const contractName = await contract.name();
-      console.log("The token's contract name is " + contractName);
-
-      /* Get the ERC-20 token symbol */
-      const tokenSymbol = await contract.symbol();
-      console.log("The token's symbol is " + tokenSymbol);
-
-      /* Get token balance as BigNumber */
       const balance = await contract.balanceOf(account);
-
-      /* Format the balance for displaying 18 decimal places */
       const apecoinBalance = ethers.utils.formatUnits(balance, 18);
-
-      const store = useStore();
       store.setApecoinBalance(apecoinBalance);
     } catch (error) {
-      console.log(error);
+      console.log("Error", error);
     }
   };
+
+  const checkSafeWalletConnected = async () => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        throw Error();
+      }
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const safeOwner = provider.getSigner(0);
+      const ownerAddress = (await safeOwner.getAddress()).toString();
+
+      if (ownerAddress) {
+        store.setWallet(ownerAddress);
+        await checkApecoinBalance(ownerAddress);
+        await checkETHBalance(ownerAddress);
+        store.setConnected(true);
+
+        const ethAdapter = new EthersAdapter({
+          ethers,
+          signerOrProvider: safeOwner,
+        });
+
+        const safeService = new SafeApiKit({ txServiceUrl, ethAdapter });
+        const safes: OwnerResponse = await safeService.getSafesByOwner(ownerAddress);
+        store.setSafes(safes.safes);
+      }
+      return;
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
+  onMounted(async () => {
+    await checkSafeWalletConnected();
+  });
 </script>
 <style lang="scss" scoped>
   @import "@/assets/styles/variables.scss";
@@ -293,6 +321,7 @@
     padding: 0;
 
     @include breakpoint($break-sm) {
+      height: auto;
       flex-direction: column;
       background-image: url("../assets/images/mobile_grey.png");
       background-size: contain;
@@ -309,7 +338,8 @@
     padding: 0;
     @include breakpoint($break-sm) {
       width: 100%;
-      flex-direction: column;
+      flex-direction: column-reverse;
+      padding-bottom: 50px;
     }
   }
 

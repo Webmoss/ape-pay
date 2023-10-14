@@ -64,12 +64,9 @@
 
 <script setup lang="ts">
   import SafeApiKit, { OwnerResponse, SafeServiceInfoResponse } from "@safe-global/api-kit";
-  import { Web3AuthConfig, Web3AuthEventListener, Web3AuthModalPack } from "@safe-global/auth-kit";
   import Safe, { EthersAdapter, SafeFactory } from "@safe-global/protocol-kit";
+  import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
   // import type { IProvider } from "@web3auth/base";
-  import { ADAPTER_EVENTS, CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
-  import { Web3AuthOptions } from "@web3auth/modal";
-  import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
   import { ethers } from "ethers";
   import { storeToRefs } from "pinia";
   import { onMounted, ref } from "vue";
@@ -77,79 +74,12 @@
   import { useStore } from "@/store";
 
   const store = useStore();
-  const { connected, wallet, safes, balance, apecoinBalance } = storeToRefs(store);
+  const { connected, wallet, balance, apecoinBalance } = storeToRefs(store);
 
-  // const provider = ref<IProvider | any>(false);
-
-  const clientId =
-    "BBfk8wSH3Kn6HREZ2PQ41USY9PzLvR56q0PJ9fxDxD8TuiFjfWIw-rrbjGynxx4GkRc2vg8lm2UPvSk-WnDunI4";
-
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-  // const options: Web3AuthOptions = {
-  //   clientId: clientId,
-  //   web3AuthNetwork: "testnet",
-  //   chainConfig: {
-  //     chainNamespace: CHAIN_NAMESPACES.EIP155,
-  //     chainId: "0x5",
-  //     rpcTarget: "https://rpc.ankr.com/eth_goerli",
-  //   },
-  //   uiConfig: {
-  //     appName: "ApePay",
-  //     theme: "dark",
-  //     loginMethodsOrder: ["google", "facebook"],
-  //   },
-  // };
-
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-  const options: Web3AuthOptions = {
-    clientId: clientId,
-    web3AuthNetwork: "mainnet",
-    chainConfig: {
-      chainNamespace: CHAIN_NAMESPACES.EIP155,
-      chainId: "0x1",
-      rpcTarget: "https://rpc.ankr.com/eth_goerli",
-    },
-    uiConfig: {
-      appName: "ApePay",
-      theme: "dark",
-      loginMethodsOrder: ["google", "facebook"],
-    },
-  };
-
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters */
-  const modalConfig = {
-    [WALLET_ADAPTERS.TORUS_EVM]: {
-      label: "torus",
-      showOnModal: false,
-    },
-    [WALLET_ADAPTERS.METAMASK]: {
-      label: "metamask",
-      showOnDesktop: true,
-      showOnMobile: false,
-    },
-  };
-
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/whitelabel#whitelabeling-while-modal-initialization */
-  const openloginAdapter = new OpenloginAdapter({
-    loginSettings: {
-      mfaLevel: "mandatory",
-    },
-    adapterSettings: {
-      clientId: clientId,
-      uxMode: "popup",
-      whiteLabel: {
-        name: "ApePay",
-      },
-    },
-  });
-
-  const web3AuthConfig: Web3AuthConfig = {
-    txServiceUrl: "https://safe-transaction-goerli.safe.global",
-  };
-
-  const connectedHandler: Web3AuthEventListener = (data) => console.log("CONNECTED", data);
-  const disconnectedHandler: Web3AuthEventListener = (data) => console.log("DISCONNECTED", data);
-  const erroredHandler: Web3AuthEventListener = (data) => console.log("ERRORED", data);
+  const txServiceUrl =
+    process.env.NODE_ENV && process.env.NODE_ENV === "development"
+      ? "https://safe-transaction-goerli.safe.global"
+      : "https://safe-transaction-mainnet.safe.global";
 
   const form = ref({
     address: "",
@@ -158,7 +88,7 @@
     fees: true,
   });
 
-  const cancel = async () => {
+  const clearForm = async () => {
     console.log("cancel");
     form.value = {
       address: "",
@@ -168,113 +98,112 @@
     };
   };
 
+  // const makePayment = async () => {
+  //   console.log("makePayment");
+  //   try {
+  //     const { ethereum } = window;
+  //     if (!ethereum) {
+  //       throw Error();
+  //     }
+  //     const provider = new ethers.providers.Web3Provider(ethereum);
+  //     const signer = provider.getSigner();
+
+  //     const destination = form.value.address;
+
+  //     /* Convert 1 ether to wei */
+  //     // const amount = ethers.utils.parseEther("0.001");
+  //     const amount = ethers.utils.parseEther(form.value.amount);
+
+  //     /* Submit transaction to the blockchain */
+  //     const tx = await signer.sendTransaction({
+  //       to: destination,
+  //       value: amount,
+  //       maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
+  //       maxFeePerGas: "6000000000000", // Max fee per gas
+  //     });
+
+  //     /* Wait for transaction to be mined */
+  //     const receipt = await tx.wait();
+
+  //     clearForm();
+  //     return receipt;
+  //   } catch (error) {
+  //     return error as string;
+  //   }
+  // };
+
   const makePayment = async () => {
-    // console.log("makePayment");
-    // try {
-    //   const { ethereum } = window;
-    //   if (!ethereum) {
-    //     throw Error();
-    //   }
-    //   const provider = new ethers.providers.Web3Provider(ethereum);
-    //   const signer = provider.getSigner();
-    //   const destination = form.value.address;
-    //   /* Convert 1 ether to wei */
-    //   // const amount = ethers.utils.parseEther("0.001");
-    //   const amount = ethers.utils.parseEther(form.value.amount);
-    //   /* Submit transaction to the blockchain */
-    //   const tx = await signer.sendTransaction({
-    //     to: destination,
-    //     value: amount,
-    //     maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
-    //     maxFeePerGas: "6000000000000", // Max fee per gas
-    //   });
-    //   /* Wait for transaction to be mined */
-    //   const receipt = await tx.wait();
-    //   return receipt;
-    // } catch (error) {
-    //   return error as string;
-    // }
-  };
-
-  const signTxn = async () => {
-    store.setLoading(true);
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        throw Error();
-      }
-
-      /* Instantiate and initialize the pack */
-      const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-      await web3AuthModalPack.init({
-        options,
-        adapters: [openloginAdapter],
-        modalConfig,
-      });
-
-      const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider());
-      const signer = provider.getSigner();
-
-      const ethAdapter = new EthersAdapter({
-        ethers,
-        signerOrProvider: signer || provider,
-      });
-
-      const safeOwner = web3AuthModalPack.getSafes("0");
-
-      const safeSDK = await Safe.create({
-        ethAdapter,
-        safeAddress,
-      });
-
-      // Create a Safe transaction with the provided parameters
-      const safeTransactionData: MetaTransactionData = {
-        to: "0x",
-        data: "0x",
-        value: ethers.utils.parseUnits("0.0001", "ether").toString(),
-      };
-
-      const safeTransaction = await safeSDK.createTransaction({
-        safeTransactionData,
-      });
-    } catch (error) {
-      console.log("Error", error);
-    } finally {
-      store.setLoading(false);
-    }
-  };
-
-  const sendTransaction = async () => {
     console.log("sendTransaction");
     try {
       const { ethereum } = window;
       if (!ethereum) {
         throw Error();
       }
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const safeOwner = provider.getSignerSafeApiKit(0);
-      console.log("Safe Owner", safeOwner);
 
-      /* Instantiate an EthAdapter */
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const safeOwner = provider.getSigner(0);
+
       const ethAdapter = new EthersAdapter({
         ethers,
         signerOrProvider: safeOwner,
       });
 
-      // Initialize the Safe API Kit
-      const txServiceUrl = "https://safe-transaction-goerli.safe.global";
       const safeService = new SafeApiKit({ txServiceUrl, ethAdapter });
+      const ownerAddress = (await safeOwner.getAddress()).toString();
+      console.log("ownerAddress", ownerAddress);
+      const safes: OwnerResponse = await safeService.getSafesByOwner(wallet.value);
+      console.log("Safes", safes.safes[0]);
 
       const serviceInfo: SafeServiceInfoResponse = await safeService.getServiceInfo();
       console.log("serviceInfo", serviceInfo);
 
-      const ownerAddress = (await safeOwner.getAddress()).toString();
-      const safes: OwnerResponse = await safeService.getSafesByOwner(ownerAddress);
-      console.log("safes", safes);
+      // const safeFactory = await SafeFactory.create({ ethAdapter });
+      const safeSdk = await Safe.create({ ethAdapter, safeAddress: ownerAddress });
 
-      /* Initialize the Protocol Kit */
-      const safeFactory = await SafeFactory.create({ ethAdapter });
-      const safeSdk = await Safe.create({ ethAdapter, safeAddress });
+      const destination = form.value.address;
+      const amount = ethers.utils.parseEther(form.value.amount).toString();
+
+      const safeTransactionData: SafeTransactionDataPartial = {
+        to: destination,
+        data: ownerAddress,
+        value: amount,
+        // operation, // Optional
+        // safeTxGas, // Optional
+        // baseGas, // Optional
+        // gasPrice, // Optional
+        // gasToken, // Optional
+        // refundReceiver, // Optional
+        // nonce, // Optional
+      };
+
+      const safeTransaction = await safeSdk.createTransaction({ safeTransactionData });
+      const safeTxHash = await safeSdk.getTransactionHash(safeTransaction);
+      const senderSignature = await safeSdk.signTransactionHash(safeTxHash);
+
+      await safeService.proposeTransaction({
+        safeAddress: safes.safes[0],
+        safeTransactionData: safeTransaction.data,
+        safeTxHash,
+        senderAddress: ownerAddress,
+        senderSignature: senderSignature.data,
+        origin,
+      });
+      const pendingTransactions = await safeService.getPendingTransactions(safes.safes[0]);
+
+      /* Assumes that the first pending transaction is the transaction you want to confirm */
+      const transaction = pendingTransactions[0];
+      const safeTxnHash = transaction.safeTxHash;
+      const safeTxn = await safeService.getTransaction(safeTxnHash);
+      const executeTxResponse = await safeSdk.executeTransaction(safeTxn);
+      const receipt = await executeTxResponse.transactionResponse?.wait();
+
+      console.log("Transaction executed:");
+      console.log(`https://goerli.etherscan.io/tx/${receipt.transactionHash}`);
+
+      const afterBalance = await safeSdk.getBalance();
+      console.log(
+        `The final balance of the Safe: ${ethers.utils.formatUnits(afterBalance, "ether")} ETH`
+      );
 
       return;
     } catch (error) {

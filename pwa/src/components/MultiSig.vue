@@ -100,7 +100,10 @@
         <input v-model="form.fees" name="fees" type="checkbox" class="checkbox-input" />
         <label for="fees" class="checkbox-label">Pay fees with ApeCoin</label>
       </div>
-      <div class="button-container-end">
+      <div class="button-container">
+        <button v-if="connected" class="grey-button-sml" @click="swtichTab('multi-sig')">
+          Back
+        </button>
         <button v-if="connected" class="green-button-sml" @click="makePayment">Pay Now</button>
       </div>
     </form>

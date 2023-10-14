@@ -53,22 +53,22 @@
               <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
             </svg>
           </button>
+          <button class="mobile-button" @click.prevent="scrollPageToTop">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="20px"
+              viewBox="0 0 24 24"
+              width="20px"
+              fill="#000000"
+              class="arrow-up"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
-    <button class="mobile-button" @click.prevent="scrollPageToTop">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="20px"
-        viewBox="0 0 24 24"
-        width="20px"
-        fill="#000000"
-        class="arrow-up"
-      >
-        <path d="M0 0h24v24H0V0z" fill="none" />
-        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
-      </svg>
-    </button>
   </footer>
 </template>
 
@@ -136,12 +136,13 @@
     background-repeat: no-repeat;
     background-position: right 150px top 0;
     @include breakpoint($break-sm) {
+      height: auto;
       flex-direction: column;
-      padding: 70px 30px 20px;
+      padding: 20px;
     }
     @include breakpoint($break-md) {
       flex-direction: row;
-      padding: 4rem 30px 2rem;
+      padding: 20px;
     }
     @include breakpoint($break-lg) {
       padding: 4rem 100px;
@@ -215,6 +216,9 @@
   .row .footer-card {
     text-align: left;
     width: 20%;
+    @include breakpoint($break-sm) {
+      width: 100%;
+    }
   }
 
   .site-links {
@@ -285,8 +289,7 @@
       height: 60px;
       width: 60px;
       border-radius: 4px;
-      margin-left: auto;
-      margin-right: 30px;
+      margin: -85px 0 0 auto;
       cursor: pointer;
     }
   }

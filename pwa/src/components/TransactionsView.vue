@@ -62,6 +62,7 @@
     padding: 0;
 
     @include breakpoint($break-sm) {
+      height: auto;
       flex-direction: column;
       background-image: url("../assets/images/mobile_yellow.png");
       background-size: auto;
@@ -86,7 +87,7 @@
 
       @include breakpoint($break-sm) {
         width: 100%;
-        height: 190px;
+        height: auto;
         flex-direction: column;
         justify-content: flex-start;
       }
@@ -99,6 +100,11 @@
         align-items: center;
         justify-content: flex-start;
         margin-left: 60px;
+        @include breakpoint($break-sm) {
+          width: 100%;
+          justify-content: center;
+          margin: 0 auto;
+        }
       }
       .tab-button {
         color: $white;

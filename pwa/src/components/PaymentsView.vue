@@ -90,6 +90,7 @@
     padding: 0;
 
     @include breakpoint($break-sm) {
+      height: auto;
       flex-direction: column;
       background-image: url("../assets/images/large_blue_graphic.png");
       background-size: auto;
