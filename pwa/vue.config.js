@@ -3,6 +3,7 @@ const path = require("path");
 const { defineConfig } = require("@vue/cli-service");
 const { ProvidePlugin } = require("webpack");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = defineConfig({
   devServer: {
@@ -23,7 +24,7 @@ module.exports = defineConfig({
       os: false,
       https: false,
       http: false,
-      url: false,
+      url: "url",
       zlib: false,
     };
     config.resolve.alias = {
@@ -38,6 +39,14 @@ module.exports = defineConfig({
         analyzerMode: "disabled",
       })
     );
+    config.plugins.push(
+      new NodePolyfillPlugin()
+    );
+    config.optimization = {
+      splitChunks: {
+        chunks: "all",
+      },
+    };
   },
   crossorigin: "anonymous",
   productionSourceMap: true,

@@ -37,7 +37,7 @@
                 <span class="account-icon circle">
                   <img src="@/assets/images/eth-diamond-black.png" height="20" />
                 </span>
-                {{ balance ? parseFloat(balance).toFixed(4) : parseFloat("0").toFixed(4) }}
+                {{ ethBalance ? parseFloat(ethBalance).toFixed(4) : parseFloat("0").toFixed(4) }}
               </div>
             </span>
           </p>
@@ -78,20 +78,9 @@
   import { storeToRefs } from "pinia";
   import { onMounted } from "vue";
 
-  import apecoinAbi from "@/abi/ethereum-ape-token-abi.json";
-  import apecoinGoerliAbi from "@/abi/goerli-ape-token-abi.json";
   import { useStore } from "@/store";
 
   import MiniMenu from "./MiniMenu.vue";
-
-  /* Ape Token Contract Addresses */
-  const apecoinAddress = "0x4d224452801ACEd8B2F0aebE155379bb5D594381";
-  const apecoinGoerliAddress = "0x328507DC29C95c170B56a1b3A758eB7a9E73455c";
-  const apecoinContract =
-    process.env.NODE_ENV && process.env.NODE_ENV === "development"
-      ? apecoinGoerliAddress
-      : apecoinAddress;
-  const apecoinABI = process.env.NODE_ENV === "development" ? apecoinGoerliAbi.abi : apecoinAbi.abi;
 
   const clientId =
     "BBfk8wSH3Kn6HREZ2PQ41USY9PzLvR56q0PJ9fxDxD8TuiFjfWIw-rrbjGynxx4GkRc2vg8lm2UPvSk-WnDunI4";
@@ -101,39 +90,20 @@
       : "https://safe-transaction-mainnet.safe.global";
 
   const store = useStore();
-  const { connected, balance, apecoinBalance, wallet, safes } = storeToRefs(store);
+  const { connected, ethBalance, apecoinBalance, wallet, safes } = storeToRefs(store);
 
   const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: txServiceUrl,
   };
 
   /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-  const options: Web3AuthOptions = {
-    clientId: clientId,
-    web3AuthNetwork: "testnet",
-    chainConfig: {
-      chainNamespace: CHAIN_NAMESPACES.EIP155,
-      chainId: "0x5",
-      rpcTarget: "https://rpc.ankr.com/eth_goerli",
-    },
-    uiConfig: {
-      appName: "ApePay",
-      theme: "dark",
-      loginMethodsOrder: ["google", "facebook"],
-    },
-  };
-
-  const styles = ["color: black", "background: #12ff80"].join(";");
-  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
-
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
   // const options: Web3AuthOptions = {
   //   clientId: clientId,
-  //   web3AuthNetwork: "mainnet",
+  //   web3AuthNetwork: "testnet",
   //   chainConfig: {
   //     chainNamespace: CHAIN_NAMESPACES.EIP155,
-  //     chainId: "0x1",
-  //     rpcTarget: "https://rpc.ankr.com/eth",
+  //     chainId: "0x5",
+  //     rpcTarget: "https://rpc.ankr.com/eth_goerli",
   //   },
   //   uiConfig: {
   //     appName: "ApePay",
@@ -141,6 +111,25 @@
   //     loginMethodsOrder: ["google", "facebook"],
   //   },
   // };
+
+  const styles = ["color: black", "background: #12ff80"].join(";");
+  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
+
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
+  const options: Web3AuthOptions = {
+    clientId: clientId,
+    web3AuthNetwork: "mainnet",
+    chainConfig: {
+      chainNamespace: CHAIN_NAMESPACES.EIP155,
+      chainId: "0x1",
+      rpcTarget: "https://rpc.ankr.com/eth",
+    },
+    uiConfig: {
+      appName: "ApePay",
+      theme: "dark",
+      loginMethodsOrder: ["google", "facebook"],
+    },
+  };
 
   /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters */
   const modalConfig = {
@@ -164,7 +153,14 @@
       clientId: clientId,
       uxMode: "popup",
       whiteLabel: {
-        appName: "ApePay",
+        name: "ApePay",
+      },
+      loginConfig: {
+        google: {
+          verifier: "ape-pay-google",
+          typeOfLogin: "google",
+          clientId: "356104180725-0hio027km1iu44j6s3legfj1bqpff928.apps.googleusercontent.com", // Pass on the Google `Client ID` here
+        },
       },
     },
   });
@@ -189,7 +185,10 @@
       web3AuthModalPack.subscribe(ADAPTER_EVENTS.DISCONNECTED, disconnectedHandler);
       web3AuthModalPack.subscribe(ADAPTER_EVENTS.ERRORED, erroredHandler);
 
+      /* The signIn() method will return the user's Ethereum address */
+      /* The await will last until the user is authenticated, so while the UI modal is showed */
       const signInInfo = await web3AuthModalPack.signIn();
+      console.log("signInInfo", signInInfo);
 
       // AuthKitSignInData {
       //   eoa: string // The safe signer
@@ -199,8 +198,8 @@
       if (signInInfo) {
         store.setWallet(signInInfo.eoa);
         store.setSafes(signInInfo.safes);
-        await checkApecoinBalance(signInInfo.eoa);
-        await checkETHBalance(signInInfo.eoa);
+        store.checkApecoinBalance(signInInfo.eoa);
+        store.checkETHBalance(signInInfo.eoa);
         store.setConnected(true);
       }
 
@@ -233,41 +232,6 @@
     }
   };
 
-  const checkETHBalance = async (account: string) => {
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        console.log(`Please connect web3 wallet to continue!`);
-        return;
-      }
-      const store = useStore();
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const wei = await provider.getBalance(account);
-      const ethBalance = ethers.utils.formatEther(wei);
-      store.setBalance(ethBalance);
-    } catch (error) {
-      console.log("Error", error);
-    }
-  };
-
-  const checkApecoinBalance = async (account: string) => {
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        console.log(`Please connect web3 wallet to continue!`);
-        return;
-      }
-      const store = useStore();
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const contract = new ethers.Contract(apecoinContract, apecoinABI, provider);
-      const balance = await contract.balanceOf(account);
-      const apecoinBalance = ethers.utils.formatUnits(balance, 18);
-      store.setApecoinBalance(apecoinBalance);
-    } catch (error) {
-      console.log("Error", error);
-    }
-  };
-
   const checkSafeWalletConnected = async () => {
     try {
       const { ethereum } = window;
@@ -276,12 +240,15 @@
       }
       const provider = new ethers.providers.Web3Provider(ethereum);
       const safeOwner = provider.getSigner(0);
+      console.log("safeOwner", safeOwner);
+
       const ownerAddress = (await safeOwner.getAddress()).toString();
+      console.log("ownerAddress", ownerAddress);
 
       if (ownerAddress) {
         store.setWallet(ownerAddress);
-        await checkApecoinBalance(ownerAddress);
-        await checkETHBalance(ownerAddress);
+        store.checkApecoinBalance(ownerAddress);
+        store.checkETHBalance(ownerAddress);
         store.setConnected(true);
 
         const ethAdapter = new EthersAdapter({

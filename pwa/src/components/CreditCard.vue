@@ -1,6 +1,6 @@
 <template>
   <div id="credit-card" class="card">
-    <form>
+    <div class="payment-form">
       <div class="input-row">
         <label for="address">Send To</label>
         <input
@@ -47,7 +47,7 @@
             <span class="account-icon circle">
               <img src="@/assets/images/eth-diamond-black.png" height="24" />
             </span>
-            {{ balance ? parseFloat(balance).toFixed(4) : parseFloat("0").toFixed(4) }}
+            {{ ethBalance ? parseFloat(ethBalance).toFixed(4) : parseFloat("0").toFixed(4) }}
           </div>
         </span>
       </div>
@@ -58,7 +58,7 @@
       <div class="button-container-end">
         <button v-if="connected" class="green-button-sml" @click="makePayment">Pay Now</button>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -70,7 +70,7 @@
   import { useStore } from "@/store";
 
   const store = useStore();
-  const { connected, balance, apecoinBalance } = storeToRefs(store);
+  const { connected, ethBalance, apecoinBalance } = storeToRefs(store);
 
   const form = ref({
     address: "",
