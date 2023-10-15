@@ -1,4 +1,5 @@
 import "./assets/styles/style.scss";
+import "notyf/notyf.min.css";
 
 import { createPinia } from "pinia";
 import { createApp } from "vue";

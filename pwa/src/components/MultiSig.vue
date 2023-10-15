@@ -104,7 +104,9 @@
         <button v-if="connected" class="grey-button-sml" @click="swtichTab('multi-sig')">
           Back
         </button>
-        <button v-if="connected" class="green-button-sml" @click="makePayment">Pay Now</button>
+        <button v-if="connected" class="green-button-sml" :disabled="disabled" @click="makePayment">
+          Pay Now
+        </button>
       </div>
     </div>
   </div>
@@ -116,8 +118,9 @@
   import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
   // import type { IProvider } from "@web3auth/base";
   import { ethers } from "ethers";
+  import { Notyf } from "notyf";
   import { storeToRefs } from "pinia";
-  import { onMounted, ref } from "vue";
+  import { ref } from "vue";
 
   import { useStore } from "@/store";
 
@@ -149,24 +152,75 @@
     tab.value = type;
   };
 
-  // const cancel = async () => {
-  //   console.log("cancel");
-  //   multiSigs.value = {
-  //     addressOne: "",
-  //     addressTwo: "",
-  //     addressThree: "",
-  //     addressFour: "",
-  //   };
-  //   form.value = {
-  //     address: "",
-  //     amount: "",
-  //     message: "",
-  //     fees: true,
-  //   };
-  // };
+  /* Create an instance of Notyf */
+  const notyf = new Notyf({
+    duration: 5000,
+    position: {
+      x: "center",
+      y: "bottom",
+    },
+    types: [
+      {
+        type: "loading",
+        background: "orange",
+        duration: 15000,
+        dismissible: false,
+        icon: {
+          className: "icon icon-loading",
+          tagName: "i",
+        },
+      },
+      {
+        type: "success",
+        background: "green",
+        duration: 20000,
+        dismissible: false,
+        icon: {
+          className: "icon icon-success",
+          tagName: "i",
+        },
+      },
+      {
+        type: "error",
+        background: "indianred",
+        duration: 10000,
+        dismissible: false,
+        icon: {
+          className: "icon icon-error",
+          tagName: "i",
+        },
+      },
+    ],
+  });
+
+  const clearForm = async () => {
+    console.log("cancel");
+    multiSigs.value = {
+      addressOne: "",
+      addressTwo: "",
+      addressThree: "",
+      addressFour: "",
+    };
+    form.value = {
+      address: "",
+      amount: "",
+      message: "",
+      fees: true,
+    };
+  };
+
+  const disabled = ref(false);
 
   const makePayment = async () => {
-    console.log("sendTransaction");
+    /* Init loading indicator */
+    const loadingIndicator = notyf.open({
+      type: "loading",
+      message: "⏳ Processing payment now...please wait!",
+    });
+
+    /* Disable our Pay Now button */
+    disabled.value = true;
+
     try {
       const { ethereum } = window;
       if (!ethereum) {
@@ -182,8 +236,9 @@
       });
 
       const safeService = new SafeApiKit({ txServiceUrl, ethAdapter });
-      const ownerAddress = (await safeOwner.getAddress()).toString();
-      console.log("ownerAddress", ownerAddress);
+      const safeAddress = (await safeOwner.getAddress()).toString();
+      console.log("safeAddress", safeAddress);
+
       const safes: OwnerResponse = await safeService.getSafesByOwner(wallet.value);
       console.log("Safes", safes.safes[0]);
 
@@ -191,14 +246,20 @@
       console.log("serviceInfo", serviceInfo);
 
       // const safeFactory = await SafeFactory.create({ ethAdapter });
-      const safeSdk = await Safe.create({ ethAdapter, safeAddress: ownerAddress });
+      const safeSdk = await Safe.create({ ethAdapter, safeAddress: safeAddress });
 
       const destination = form.value.address;
-      const amount = ethers.utils.parseEther(form.value.amount).toString();
+      console.log("destination", destination);
+
+      const amount = ethers.utils.parseUnits(form.value.amount, "ether").toHexString();
+      console.log("amount", amount);
+
+      const message = form.value.message;
+      console.log("message", message);
 
       const safeTransactionData: SafeTransactionDataPartial = {
         to: destination,
-        data: ownerAddress,
+        data: safeAddress,
         value: amount,
         // operation, // Optional
         // safeTxGas, // Optional
@@ -217,7 +278,7 @@
         safeAddress: safes.safes[0],
         safeTransactionData: safeTransaction.data,
         safeTxHash,
-        senderAddress: ownerAddress,
+        senderAddress: safeAddress,
         senderSignature: senderSignature.data,
         origin,
       });
@@ -238,8 +299,32 @@
         `The final balance of the Safe: ${ethers.utils.formatUnits(afterBalance, "ether")} ETH`
       );
 
+      /* Remove loading indicator and show success notification */
+      notyf.dismiss(loadingIndicator);
+      notyf.open({
+        type: "success",
+        message: `Payment successful`,
+      });
+
+      const paymentDate = new Date();
+      const paymentDateTimestamp = paymentDate.getTime();
+      const paymentDateString = paymentDateTimestamp.toString();
+      console.log("Payment Date :", paymentDateString);
+
+      /* Update our Balances */
+      store.checkApecoinBalance(safeAddress);
+      store.checkETHBalance(safeAddress);
+
+      /* Clear Form */
+      clearForm();
+      /* Enable our Pay Now button */
+      disabled.value = false;
       return;
     } catch (error) {
+      notyf.dismiss(loadingIndicator);
+      notyf.error("❌ Error processing payment!");
+      /* Enable our Pay Now button */
+      disabled.value = false;
       return error as string;
     }
   };

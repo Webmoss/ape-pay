@@ -35,11 +35,16 @@ body {
   }
 }
 
+.notyf .notyf__message {
+  font-size: 0.9rem;
+}
+
 .row {
   width: 100%;
 }
 
 .mini-menu {
+  min-width: 136px;
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -24,7 +24,7 @@ module.exports = defineConfig({
       os: false,
       https: false,
       http: false,
-      url: "url",
+      url: false,
       zlib: false,
     };
     config.resolve.alias = {

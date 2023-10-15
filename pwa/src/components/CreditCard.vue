@@ -56,7 +56,9 @@
         <label for="fees" class="checkbox-label">Pay fees with ApeCoin</label>
       </div>
       <div class="button-container-end">
-        <button v-if="connected" class="green-button-sml" @click="makePayment">Pay Now</button>
+        <button v-if="connected" class="green-button-sml" :disabled="disabled" @click="makePayment">
+          Pay Now
+        </button>
       </div>
     </div>
   </div>
@@ -64,6 +66,7 @@
 
 <script setup lang="ts">
   // import { ethers } from "ethers";
+  // import { Notyf } from "notyf";
   import { storeToRefs } from "pinia";
   import { ref } from "vue";
 
@@ -72,6 +75,47 @@
   const store = useStore();
   const { connected, ethBalance, apecoinBalance } = storeToRefs(store);
 
+  /* Create an instance of Notyf */
+  // const notyf = new Notyf({
+  //   duration: 5000,
+  //   position: {
+  //     x: "center",
+  //     y: "bottom",
+  //   },
+  //   types: [
+  //     {
+  //       type: "loading",
+  //       background: "orange",
+  //       duration: 15000,
+  //       dismissible: false,
+  //       icon: {
+  //         className: "icon icon-loading",
+  //         tagName: "i",
+  //       },
+  //     },
+  //     {
+  //       type: "success",
+  //       background: "green",
+  //       duration: 20000,
+  //       dismissible: false,
+  //       icon: {
+  //         className: "icon icon-success",
+  //         tagName: "i",
+  //       },
+  //     },
+  //     {
+  //       type: "error",
+  //       background: "indianred",
+  //       duration: 10000,
+  //       dismissible: false,
+  //       icon: {
+  //         className: "icon icon-error",
+  //         tagName: "i",
+  //       },
+  //     },
+  //   ],
+  // });
+
   const form = ref({
     address: "",
     amount: "",
@@ -79,8 +123,7 @@
     fees: true,
   });
 
-  // const cancel = async () => {
-  //   console.log("cancel");
+  // const clearForm = async () => {
   //   form.value = {
   //     address: "",
   //     amount: "",
@@ -88,6 +131,8 @@
   //     fees: true,
   //   };
   // };
+
+  const disabled = ref(false);
 
   const makePayment = async () => {
     console.log("makePayment");

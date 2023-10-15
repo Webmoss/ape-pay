@@ -56,7 +56,7 @@
         <label for="fees" class="checkbox-label">Pay fees with ApeCoin</label>
       </div>
       <div class="button-container-end">
-        <button v-if="connected" class="green-button-sml" :disabled="sending" @click="makePayment">
+        <button v-if="connected" class="green-button-sml" :disabled="disabled" @click="makePayment">
           Pay Now
         </button>
       </div>
@@ -68,6 +68,7 @@
   import SafeApiKit, { OwnerResponse } from "@safe-global/api-kit";
   import { EthersAdapter } from "@safe-global/protocol-kit";
   import { ethers } from "ethers";
+  import { Notyf } from "notyf";
   import { storeToRefs } from "pinia";
   import { ref } from "vue";
 
@@ -80,6 +81,52 @@
     process.env.NODE_ENV && process.env.NODE_ENV === "development"
       ? "https://safe-transaction-goerli.safe.global"
       : "https://safe-transaction-mainnet.safe.global";
+
+  const txHashURL =
+    process.env.NODE_ENV && process.env.NODE_ENV === "development"
+      ? "https://goerli.etherscan.io/tx/"
+      : "https://etherscan.io/tx/";
+
+  /* Create an instance of Notyf */
+  const notyf = new Notyf({
+    duration: 5000,
+    position: {
+      x: "center",
+      y: "bottom",
+    },
+    types: [
+      {
+        type: "loading",
+        background: "orange",
+        duration: 15000,
+        dismissible: false,
+        icon: {
+          className: "icon icon-loading",
+          tagName: "i",
+        },
+      },
+      {
+        type: "success",
+        background: "green",
+        duration: 20000,
+        dismissible: false,
+        icon: {
+          className: "icon icon-success",
+          tagName: "i",
+        },
+      },
+      {
+        type: "error",
+        background: "indianred",
+        duration: 10000,
+        dismissible: false,
+        icon: {
+          className: "icon icon-error",
+          tagName: "i",
+        },
+      },
+    ],
+  });
 
   const form = ref({
     address: "",
@@ -97,11 +144,18 @@
     };
   };
 
-  const sending = ref(false);
+  const disabled = ref(false);
 
   const makePayment = async () => {
-    console.log("makePayment");
-    sending.value = true;
+    /* Init loading indicator */
+    const loadingIndicator = notyf.open({
+      type: "loading",
+      message: "⏳ Processing payment now...please wait!",
+    });
+
+    /* Disable our Pay Now button */
+    disabled.value = true;
+
     try {
       const { ethereum } = window;
       if (!ethereum) {
@@ -138,13 +192,23 @@
       };
 
       const tx = await safeOwner.sendTransaction(transactionParameters);
-
-      console.log(`Transaction Hash: https://goerli.etherscan.io/tx/${tx.hash}`);
-      console.log(`Transaction Hash: https://etherscan.io/tx/${tx.hash}`);
+      console.log(`Transaction Hash: ${txHashURL}${tx.hash}`);
 
       /* Wait for transaction to be mined */
       const receipt = await tx.wait();
       console.log("Receipt", receipt);
+
+      /* Remove loading indicator and show success notification */
+      notyf.dismiss(loadingIndicator);
+      notyf.open({
+        type: "success",
+        message: `Payment successful`,
+      });
+
+      const paymentDate = new Date();
+      const paymentDateTimestamp = paymentDate.getTime();
+      const paymentDateString = paymentDateTimestamp.toString();
+      console.log("Payment Date :", paymentDateString);
 
       /* Update our Balances */
       store.checkApecoinBalance(safeAddress);
@@ -152,9 +216,14 @@
 
       /* Clear Form */
       clearForm();
-      sending.value = false;
+      /* Enable our Pay Now button */
+      disabled.value = false;
       return;
     } catch (error) {
+      notyf.dismiss(loadingIndicator);
+      notyf.error("❌ Error processing payment!");
+      /* Enable our Pay Now button */
+      disabled.value = false;
       return error as string;
     }
   };

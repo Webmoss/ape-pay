@@ -187,13 +187,11 @@
 
       /* The signIn() method will return the user's Ethereum address */
       /* The await will last until the user is authenticated, so while the UI modal is showed */
-      const signInInfo = await web3AuthModalPack.signIn();
-      console.log("signInInfo", signInInfo);
-
       // AuthKitSignInData {
       //   eoa: string // The safe signer
       //   safes?: string[] // The list of associated Safe addresses
       // }
+      const signInInfo = await web3AuthModalPack.signIn();
 
       if (signInInfo) {
         store.setWallet(signInInfo.eoa);
@@ -240,10 +238,7 @@
       }
       const provider = new ethers.providers.Web3Provider(ethereum);
       const safeOwner = provider.getSigner(0);
-      console.log("safeOwner", safeOwner);
-
       const ownerAddress = (await safeOwner.getAddress()).toString();
-      console.log("ownerAddress", ownerAddress);
 
       if (ownerAddress) {
         store.setWallet(ownerAddress);
