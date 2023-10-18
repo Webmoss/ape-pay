@@ -87,7 +87,13 @@
   const txServiceUrl =
     process.env.NODE_ENV && process.env.NODE_ENV === "development"
       ? "https://safe-transaction-goerli.safe.global"
-      : "https://safe-transaction-mainnet.safe.global";
+      : "https://safe-transaction-goerli.safe.global";
+
+  /* Mainnet requires a paid service so have to use Testnet */
+  // const txServiceUrl =
+  //   process.env.NODE_ENV && process.env.NODE_ENV === "development"
+  //     ? "https://safe-transaction-goerli.safe.global"
+  //     : "https://safe-transaction-mainnet.safe.global";
 
   const store = useStore();
   const { connected, ethBalance, apecoinBalance, wallet, safes } = storeToRefs(store);
@@ -97,32 +103,13 @@
   };
 
   /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
-  // const options: Web3AuthOptions = {
-  //   clientId: clientId,
-  //   web3AuthNetwork: "testnet",
-  //   chainConfig: {
-  //     chainNamespace: CHAIN_NAMESPACES.EIP155,
-  //     chainId: "0x5",
-  //     rpcTarget: "https://rpc.ankr.com/eth_goerli",
-  //   },
-  //   uiConfig: {
-  //     appName: "ApePay",
-  //     theme: "dark",
-  //     loginMethodsOrder: ["google", "facebook"],
-  //   },
-  // };
-
-  const styles = ["color: black", "background: #12ff80"].join(";");
-  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
-
-  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
   const options: Web3AuthOptions = {
     clientId: clientId,
-    web3AuthNetwork: "mainnet",
+    web3AuthNetwork: "testnet",
     chainConfig: {
       chainNamespace: CHAIN_NAMESPACES.EIP155,
-      chainId: "0x1",
-      rpcTarget: "https://rpc.ankr.com/eth",
+      chainId: "0x5",
+      rpcTarget: "https://rpc.ankr.com/eth_goerli",
     },
     uiConfig: {
       appName: "ApePay",
@@ -130,6 +117,25 @@
       loginMethodsOrder: ["google", "facebook"],
     },
   };
+
+  const styles = ["color: black", "background: #12ff80"].join(";");
+  console.log("%c 🐵 Environment:  %s ", styles, process.env.NODE_ENV);
+
+  /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments */
+  // const options: Web3AuthOptions = {
+  //   clientId: clientId,
+  //   web3AuthNetwork: "mainnet",
+  //   chainConfig: {
+  //     chainNamespace: CHAIN_NAMESPACES.EIP155,
+  //     chainId: "0x1",
+  //     rpcTarget: "https://rpc.ankr.com/eth",
+  //   },
+  //   uiConfig: {
+  //     appName: "ApePay",
+  //     theme: "dark",
+  //     loginMethodsOrder: ["google", "facebook"],
+  //   },
+  // };
 
   /* https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters */
   const modalConfig = {

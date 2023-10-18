@@ -72,8 +72,6 @@ body {
   }
 }
 
-
-
 .payment-form {
   width: 100%;
   display: flex;
@@ -85,7 +83,7 @@ body {
 
   .input-row {
     width: 100%;
-    max-width: 380px;
+    max-width: 389px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -162,6 +160,38 @@ body {
   input:focus {
     border: 1px solid $safe-orange;
     outline: none;
+  }
+
+  select {
+    width: 100%;
+    min-width: 407px;
+    height: 44px;
+    color: $black;
+    background-color: #fdfdfd;
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 5px;
+    padding: 6px 8px;
+    text-align: left;
+    backdrop-filter: blur(20px);
+    transition: background-color 0.2s cubic-bezier(0.05, 0, 0.2, 1) 0s,
+    border-color 0.2s cubic-bezier(0.05, 0, 0.2, 1) 0s;
+    cursor: pointer;
+
+    &::placeholder {
+      color: $black;
+    }
+
+    &:hover,
+    &:focus,
+    &:focus-visible,
+    &:active {
+      border: 1px solid $safe-orange;
+      outline: none;
+    }
   }
   
   textarea {

@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
   import SafeApiKit, { OwnerResponse, SafeServiceInfoResponse } from "@safe-global/api-kit";
-  import Safe, { EthersAdapter, SafeFactory } from "@safe-global/protocol-kit";
+  import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
   import { SafeTransactionDataPartial } from "@safe-global/safe-core-sdk-types";
   // import type { IProvider } from "@web3auth/base";
   import { ethers } from "ethers";
@@ -131,26 +131,6 @@
     process.env.NODE_ENV && process.env.NODE_ENV === "development"
       ? "https://safe-transaction-goerli.safe.global"
       : "https://safe-transaction-mainnet.safe.global";
-
-  const multiSigs = ref({
-    addressOne: "",
-    addressTwo: "",
-    addressThree: "",
-    addressFour: "",
-  });
-
-  const form = ref({
-    address: "",
-    amount: "",
-    message: "",
-    fees: true,
-  });
-
-  const tab = ref("multi-sig");
-
-  const swtichTab = (type: string) => {
-    tab.value = type;
-  };
 
   /* Create an instance of Notyf */
   const notyf = new Notyf({
@@ -193,8 +173,28 @@
     ],
   });
 
+  const disabled = ref(false);
+  const tab = ref("multi-sig");
+
+  const multiSigs = ref({
+    addressOne: "",
+    addressTwo: "",
+    addressThree: "",
+    addressFour: "",
+  });
+
+  const form = ref({
+    address: "",
+    amount: "",
+    message: "",
+    fees: true,
+  });
+
+  const swtichTab = (type: string) => {
+    tab.value = type;
+  };
+
   const clearForm = async () => {
-    console.log("cancel");
     multiSigs.value = {
       addressOne: "",
       addressTwo: "",
@@ -208,8 +208,6 @@
       fees: true,
     };
   };
-
-  const disabled = ref(false);
 
   const makePayment = async () => {
     /* Init loading indicator */
