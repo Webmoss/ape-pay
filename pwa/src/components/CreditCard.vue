@@ -99,7 +99,11 @@
         <label for="fees" class="checkbox-label">Pay fees with ApeCoin</label>
       </div>
       <div class="button-container-end">
-        <button v-if="connected" class="grey-button-sml" @click="swtichTab('credit-card')">
+        <button
+          v-if="connected"
+          class="grey-button-sml margin-right"
+          @click="swtichTab('credit-card')"
+        >
           Back
         </button>
         <button v-if="connected" class="green-button-sml" :disabled="disabled" @click="makePayment">
@@ -219,7 +223,7 @@
       address: "",
       amount: "",
       message: "",
-      fees: true,
+      fees: false,
     };
   };
 
@@ -304,7 +308,9 @@
 
       /* Safe account address configured in the safeSdk to link to your Monerium account. */
       await pack.init({ safeSdk });
-      const authCode = await moneriumPack.open({ redirectUrl: "https://apepay.netlify.app/" });
+      const authCode = await moneriumPack.value.open({
+        redirectUrl: "https://apepay.netlify.app/",
+      });
       console.log("authCode", authCode);
 
       const safeMoneriumClient = await pack.open({
@@ -463,5 +469,8 @@
 
   .margin-top {
     margin-top: 10px;
+  }
+  .margin-right {
+    margin-right: 10px;
   }
 </style>

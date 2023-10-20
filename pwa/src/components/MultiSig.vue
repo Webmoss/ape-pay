@@ -205,7 +205,7 @@
       address: "",
       amount: "",
       message: "",
-      fees: true,
+      fees: false,
     };
   };
 

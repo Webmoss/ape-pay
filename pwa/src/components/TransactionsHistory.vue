@@ -2,32 +2,30 @@
   <div id="transactions-card" class="card">
     <table>
       <tr>
-        <th>Transaction ID</th>
-        <th>Wallet</th>
+        <th>Paid To</th>
         <th>Type</th>
         <th>Description</th>
         <th>Fee</th>
         <th>Fee Token</th>
         <th>Amount</th>
-        <th>Paid To</th>
         <th>Date</th>
+        <!-- <th>Transaction Hash</th> -->
       </tr>
       <template v-if="transactions.length > 0">
         <tr v-for="transaction in transactions" :key="transaction.transaction_id">
-          <td>{{ transaction.transaction_id }}</td>
-          <td>{{ transaction.wallet_address }}</td>
+          <td>{{ transaction.paid_to }}</td>
           <td>{{ transaction.type }}</td>
           <td>{{ transaction.description }}</td>
           <td>{{ transaction.fee }}</td>
           <td>{{ transaction.feeToken }}</td>
           <td>{{ transaction.amount }}</td>
-          <td>{{ transaction.paid_to }}</td>
           <td>{{ transaction.updated_date }}</td>
+          <!-- <td>{{ transaction.transaction_hash }}</td> -->
         </tr>
       </template>
       <template v-else>
-        <tr colspan="9">
-          <td colspan="9">No transaction results available</td>
+        <tr colspan="10">
+          <td colspan="10">No transaction results available</td>
         </tr>
       </template>
     </table>

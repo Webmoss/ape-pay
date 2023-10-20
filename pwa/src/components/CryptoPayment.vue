@@ -132,7 +132,7 @@
     address: "",
     amount: "",
     message: "",
-    fees: true,
+    fees: false,
   });
 
   const clearForm = async () => {
@@ -150,7 +150,7 @@
     /* Init loading indicator */
     const loadingIndicator = notyf.open({
       type: "loading",
-      message: "⏳ Processing payment now...please wait!",
+      message: "⏳ Processing payment...",
     });
 
     /* Disable our Pay Now button */
@@ -198,17 +198,39 @@
       const receipt = await tx.wait();
       console.log("Receipt", receipt);
 
+      if (receipt.status === 1) {
+        console.log("Gas Used :", receipt.gasUsed);
+        const gasUsed = ethers.utils.formatUnits(receipt.gasUsed, "ether");
+        // const gasUsed = receipt.gasUsed;
+        console.log("Gas Used :", gasUsed);
+
+        const paymentDate = new Date().toDateString();
+        console.log("Payment Date :", paymentDate);
+        // const paymentDateTimestamp = paymentDate.getTime();
+        const paymentDateString = paymentDate.toString();
+        console.log("Payment Date String :", paymentDateString);
+
+        const txn = {
+          transaction_id: receipt.blockNumber,
+          transaction_hash: receipt.transactionHash,
+          wallet_address: safeAddress,
+          type: "Crypto Payment",
+          description: form.value.message,
+          fee: gasUsed,
+          feeToken: "ETH",
+          amount: form.value.amount,
+          paid_to: destination,
+          updated_date: paymentDateString,
+        };
+
+        store.addTransactions(txn);
+      }
       /* Remove loading indicator and show success notification */
       notyf.dismiss(loadingIndicator);
       notyf.open({
         type: "success",
         message: `Payment successful`,
       });
-
-      const paymentDate = new Date();
-      const paymentDateTimestamp = paymentDate.getTime();
-      const paymentDateString = paymentDateTimestamp.toString();
-      console.log("Payment Date :", paymentDateString);
 
       /* Update our Balances */
       store.checkApecoinBalance(safeAddress);
